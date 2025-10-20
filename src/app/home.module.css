@@ -10,21 +10,87 @@
 .mainContentWrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 5rem 1.5rem; 
-  /* THAY ĐỔI: Xóa text-align: center; */
-  /* text-align: center; */ 
 }
 
 /* --- NAVBAR (Hiện đại và nhẹ nhàng) --- */
 .navBar {
   width: 100%;
-  padding: 1.5rem 3rem;
+  padding: 0.75rem 1.25rem; /* compact */
   border-bottom: 1px solid rgba(248,245,231,0.2); /* Viền màu be */
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* center inner container */
   align-items: center;
   backdrop-filter: blur(10px);
   background: linear-gradient(135deg, rgba(248,245,231,0.05) 0%, rgba(210,55,67,0.02) 100%);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease, padding 0.2s ease;
+}
+
+.navBarScrolled {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  border-color: rgba(248,245,231,0.25);
+  background: linear-gradient(135deg, rgba(0,0,0,0.25) 0%, rgba(210,55,67,0.06) 100%);
+}
+
+.navInner {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navBrand {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  font-size: 1.1rem;
+  padding: 0.1rem 0.25rem;
+  border-radius: 8px;
+}
+
+/* mini logo */
+.miniLogo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.miniLogoCircle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(210,55,67,0.35);
+}
+
+.miniLogoEye {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F8F5E7, #e8e0c7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.miniLogoPupil {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-theme-primary-red);
+}
+
+.navMenu {
+  display: flex;
+  gap: 0.5rem; /* tighter */
+  align-items: center;
 }
 
 .navLink {
@@ -32,16 +98,104 @@
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem; /* Giảm kích thước */
-  opacity: 0.8;
-  transition: all 0.3s ease;
-  padding: 0.5rem 1rem;
+  opacity: 0.85;
+  transition: all 0.25s ease;
+  padding: 0.4rem 0.7rem; /* tighter */
   border-radius: 8px;
 }
 
 .navLink:hover {
   color: var(--color-theme-primary-red);
   opacity: 1;
-  background: rgba(210,55,67,0.1);
+  background: rgba(210,55,67,0.10);
+}
+
+.activeLink {
+  color: var(--color-theme-primary-red);
+  background: rgba(210,55,67,0.12);
+  box-shadow: inset 0 0 0 1px rgba(210,55,67,0.25);
+}
+
+.hamburger {
+  display: none;
+  width: 36px; /* smaller */
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(248,245,231,0.2);
+  background: rgba(248,245,231,0.06);
+  transition: all 0.25s ease;
+}
+
+.hamburger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  border-color: rgba(210,55,67,0.35);
+}
+
+.hamburgerLine {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: var(--color-theme-text-dark);
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.hamburgerLine + .hamburgerLine {
+  margin-top: 4px;
+}
+
+.hamburgerLineTopOpen {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.hamburgerLineMiddleOpen {
+  opacity: 0;
+}
+
+.hamburgerLineBottomOpen {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Mobile menu */
+.mobileMenu {
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem; /* tighter */
+  padding: 0 0.75rem 0.75rem 0.75rem;
+}
+
+.mobileMenuOpen {
+  display: flex;
+}
+
+.mobileNavLink {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  background: rgba(248,245,231,0.06);
+  border: 1px solid rgba(248,245,231,0.12);
+}
+
+.mobileNavLink:hover {
+  opacity: 1;
+}
+
+/* Responsive navbar */
+@media (max-width: 900px) {
+  .navMenu {
+    display: none;
+  }
+  .hamburger {
+    display: inline-flex;
+  }
 }
 
 /* --- HERO SECTION LAYOUT --- */
@@ -63,6 +217,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transform: translateX(-200px);
 }
 
 /* --- LOGO DESIGN --- */

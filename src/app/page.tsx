@@ -3,6 +3,8 @@
 
 import Link from 'next/link';
 import styles from './home.module.css'; // Đảm bảo đã import
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 // Tạm dùng icon đơn giản hoặc chữ cái đại diện
 const iconMap: { [key: string]: string } = {
@@ -20,7 +22,7 @@ const navigationItems = [
   { name: 'HỖ TRỢ GIỌNG NÓI', description: 'Thiết lập và điều khiển toàn bộ ứng dụng.', href: '/voice-config' }, 
 ];
 
-// Component Logo đơn giản
+// Component Logo đơn giản (dùng cho hero)
 const Logo = () => (
   <div className={styles.logoContainer}>
     <div className={styles.logoCircle}>
@@ -35,26 +37,68 @@ const Logo = () => (
   </div>
 );
 
-// Component cho Navbar
-const Navbar = () => (
-  <nav className={styles.navBar}> 
-    <div className="flex justify-between items-center w-full">
-      {/* Logo/Tên dự án */}
-      <Link href="/" className={`${styles.navLink} text-2xl font-black`}>
-        EYE WEB
-      </Link>
-      
-      {/* Menu bên phải */}
-      <div className="flex items-center space-x-6 text-base font-medium">
-        <Link href="/glossary" className={styles.navLink}>Glossary</Link>
-        <Link href="/backups" className={styles.navLink}>Backups</Link>
-        <Link href="/ecosystem" className={styles.navLink}>Ecosystem</Link>
-        <button className="text-2xl ml-4">☰</button> {/* Nút menu/cài đặt */}
+// Component Logo nhỏ (dùng cho navbar)
+const MiniLogo = () => (
+  <div className={styles.miniLogo} aria-label="EYE WEB home">
+    <div className={styles.miniLogoCircle}>
+      <div className={styles.miniLogoEye}>
+        <div className={styles.miniLogoPupil}></div>
       </div>
     </div>
-  </nav>
+  </div>
 );
 
+// Component cho Navbar (hiện đại, responsive, gọn)
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 8);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  const navClasses = `${styles.navBar} ${scrolled ? styles.navBarScrolled : ''}`;
+
+  return (
+    <nav className={navClasses}>
+      <div className={styles.navInner}>
+        <Link href="/" className={styles.navBrand}>
+          <MiniLogo />
+        </Link>
+
+        <div className={styles.navMenu}>
+          <Link href="/watches" className={`${styles.navLink} ${pathname === '/watches' ? styles.activeLink : ''}`}>YouTube</Link>
+          <Link href="/stories" className={`${styles.navLink} ${pathname === '/stories' ? styles.activeLink : ''}`}>Đọc truyện</Link>
+          <Link href="/games" className={`${styles.navLink} ${pathname === '/games' ? styles.activeLink : ''}`}>Trò chơi</Link>
+          <Link href="/voice-config" className={`${styles.navLink} ${pathname === '/voice-config' ? styles.activeLink : ''}`}>Cài đặt giọng nói</Link>
+        </div>
+
+        <button aria-label="Toggle menu" className={styles.hamburger} onClick={() => setIsOpen(!isOpen)}>
+          <span className={`${styles.hamburgerLine} ${isOpen ? styles.hamburgerLineTopOpen : ''}`}></span>
+          <span className={`${styles.hamburgerLine} ${isOpen ? styles.hamburgerLineMiddleOpen : ''}`}></span>
+          <span className={`${styles.hamburgerLine} ${isOpen ? styles.hamburgerLineBottomOpen : ''}`}></span>
+        </button>
+      </div>
+
+      <div className={`${styles.mobileMenu} ${isOpen ? styles.mobileMenuOpen : ''}`}>
+        <Link href="/watches" className={styles.mobileNavLink}>YouTube</Link>
+        <Link href="/stories" className={styles.mobileNavLink}>Đọc truyện</Link>
+        <Link href="/games" className={styles.mobileNavLink}>Trò chơi</Link>
+        <Link href="/voice-config" className={styles.mobileNavLink}>Cài đặt giọng nói</Link>
+      </div>
+    </nav>
+  );
+};
 
 const HomePage = () => {
   return (
@@ -76,7 +120,7 @@ const HomePage = () => {
               </h1>
               
               <p className={styles.headerSubtitle}>
-                Giao diện được thiết kế tối ưu cho người dùng điều khiển bằng mắt và giọng nói.
+                Giao diện tối ưu cho người dùng điều khiển bằng mắt và giọng nói.
               </p>
 
               {/* --- NÚT HÀNH ĐỘNG CHÍNH --- */}
@@ -98,8 +142,6 @@ const HomePage = () => {
 
           {/* --- BỐ CỤC THẺ NỘI DUNG (4 CỘT) --- */}
           {/* Giữ nguyên để căn giữa */}
-          <h2 className={styles.gridTitle}>HOẶC DUYỆT QUA CÁC TRANG CHÍNH</h2>
-
           <div className={styles.navigationGrid}>
             {navigationItems.map((item) => (
               <Link key={item.name} href={item.href} className={styles.navCard}>
