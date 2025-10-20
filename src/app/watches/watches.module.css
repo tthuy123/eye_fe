@@ -1,0 +1,179 @@
+/* src/app/watches/watches.module.css */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem 1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.headerLeft { display: flex; align-items: center; gap: 0.75rem; }
+
+.brandMini {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
+  box-shadow: 0 6px 16px rgba(210,55,67,0.35);
+}
+
+.pageTitle {
+  font-family: var(--font-title), sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
+  color: var(--color-theme-primary-red);
+}
+
+.headerLink {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.85;
+  padding: 0.4rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid rgba(248,245,231,0.18);
+  background: rgba(248,245,231,0.06);
+}
+
+.headerLink:hover { opacity: 1; }
+
+.searchSection { margin-bottom: 1.5rem; }
+
+.searchBarWrap {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid rgba(248,245,231,0.2);
+  background: linear-gradient(135deg, rgba(248,245,231,0.06), rgba(210,55,67,0.04));
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+}
+
+.searchIcon { font-size: 1.1rem; opacity: 0.9; }
+
+.searchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--foreground);
+  font-size: 1.05rem;
+}
+
+.voiceBtn {
+  border: 1px solid rgba(248,245,231,0.2);
+  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
+  color: white;
+  border-radius: 10px;
+  padding: 0.4rem 0.6rem;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+
+.chip {
+  border: 1px solid rgba(248,245,231,0.18);
+  background: rgba(248,245,231,0.06);
+  color: inherit;
+  border-radius: 9999px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.chipActive {
+  border-color: rgba(210,55,67,0.4);
+  background: rgba(210,55,67,0.15);
+}
+
+.main { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.25rem; }
+
+.playerPanel { display: flex; flex-direction: column; gap: 0.75rem; padding: 0.5rem; }
+
+.playerMock {
+  aspect-ratio: 16/9;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  background: radial-gradient(80% 80% at 50% 50%, rgba(248,245,231,0.15), rgba(210,55,67,0.2));
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(248,245,231,0.12);
+}
+
+.playerScrim { position: absolute; inset: 0; backdrop-filter: blur(2px); }
+
+.playerPlay {
+  position: absolute;
+  left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 68px; height: 68px; border-radius: 50%;
+  border: none;
+  color: white;
+  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
+  box-shadow: 0 10px 30px rgba(210,55,67,0.45);
+}
+
+.playerMeta { display: grid; gap: 0.25rem; }
+.videoTitle { font-weight: 700; font-size: 1.1rem; }
+.videoChannel { opacity: 0.8; font-size: 0.95rem; }
+
+.resultsPanel { overflow: hidden; padding: 0.5rem; }
+
+.resultsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.9rem;
+}
+
+.card {
+  text-align: left;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(248,245,231,0.15);
+  background: linear-gradient(135deg, rgba(248,245,231,0.05), rgba(210,55,67,0.04));
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.cardFocused,
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(210,55,67,0.35);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+}
+
+.thumbWrap { position: relative; }
+.thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-size: cover;
+  background-position: center;
+}
+
+.duration {
+  position: absolute;
+  right: 8px; bottom: 8px;
+  font-size: 0.8rem;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+}
+
+.meta { padding: 0.6rem 0.7rem 0.75rem 0.7rem; }
+.title { font-weight: 700; font-size: 0.98rem; line-height: 1.35; }
+.channel { opacity: 0.8; font-size: 0.9rem; margin-top: 0.25rem; }
+
+@media (max-width: 1024px) {
+  .main { grid-template-columns: 1fr; }
+  .resultsGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .resultsGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+
