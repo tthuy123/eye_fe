@@ -1,103 +1,123 @@
-import Image from "next/image";
+// src/app/page.tsx
+'use client';
 
-export default function Home() {
+import Link from 'next/link';
+import styles from './home.module.css'; // Đảm bảo đã import
+
+// Tạm dùng icon đơn giản hoặc chữ cái đại diện
+const iconMap: { [key: string]: string } = {
+  'XEM YOUTUBE': '▶',
+  'ĐỌC TRUYỆN': '📚',
+  'TRÒ CHƠI': '🎮',
+  'HỖ TRỢ GIỌNG NÓI': '🎙️' 
+};
+
+// Định nghĩa các trang chính (Giữ nguyên)
+const navigationItems = [
+  { name: 'XEM YOUTUBE', description: 'Video, tìm kiếm & điều khiển bằng giọng nói.', href: '/watches' },
+  { name: 'ĐỌC TRUYỆN', description: 'Truyện chữ, sách nói & điều khiển bằng giọng nói.', href: '/stories' },
+  { name: 'TRÒ CHƠI', description: '1-2 Game vận động mắt đơn giản.', href: '/games' },
+  { name: 'HỖ TRỢ GIỌNG NÓI', description: 'Thiết lập và điều khiển toàn bộ ứng dụng.', href: '/voice-config' }, 
+];
+
+// Component Logo đơn giản
+const Logo = () => (
+  <div className={styles.logoContainer}>
+    <div className={styles.logoCircle}>
+      <div className={styles.logoEye}>
+        <div className={styles.logoPupil}></div>
+      </div>
+    </div>
+    <div className={styles.logoText}>
+      <span className={styles.logoMain}>EYE</span>
+      <span className={styles.logoSub}>WEB</span>
+    </div>
+  </div>
+);
+
+// Component cho Navbar
+const Navbar = () => (
+  <nav className={styles.navBar}> 
+    <div className="flex justify-between items-center w-full">
+      {/* Logo/Tên dự án */}
+      <Link href="/" className={`${styles.navLink} text-2xl font-black`}>
+        EYE WEB
+      </Link>
+      
+      {/* Menu bên phải */}
+      <div className="flex items-center space-x-6 text-base font-medium">
+        <Link href="/glossary" className={styles.navLink}>Glossary</Link>
+        <Link href="/backups" className={styles.navLink}>Backups</Link>
+        <Link href="/ecosystem" className={styles.navLink}>Ecosystem</Link>
+        <button className="text-2xl ml-4">☰</button> {/* Nút menu/cài đặt */}
+      </div>
+    </div>
+  </nav>
+);
+
+
+const HomePage = () => {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className={styles.container}>
+        <Navbar />
+        
+        <div className={styles.mainContentWrapper}>
+          
+          {/* --- HERO SECTION VỚI LOGO --- */}
+          <div className={styles.heroSection}>
+            {/* Hero Content bên trái */}
+            <div className={styles.heroContent}> 
+              <span className={styles.tagline}>
+                PROJECT EYE FE
+              </span>
+              
+              <h1 className={styles.headerTitle}>
+                WEB HỖ TRỢ VẬN ĐỘNG
+              </h1>
+              
+              <p className={styles.headerSubtitle}>
+                Giao diện được thiết kế tối ưu cho người dùng điều khiển bằng mắt và giọng nói.
+              </p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+              {/* --- NÚT HÀNH ĐỘNG CHÍNH --- */}
+              <div className="mt-8 space-x-4"> 
+                <Link href="/guide" className={styles.actionButton}>
+                  Hướng Dẫn Sử Dụng
+                </Link>
+                <Link href="/voice-config" className={styles.actionButton}> 
+                  Cài Đặt Giọng Nói
+                </Link>
+              </div>
+            </div>
+
+            {/* Logo bên phải */}
+            <div className={styles.logoSection}>
+              <Logo />
+            </div>
+          </div>
+
+          {/* --- BỐ CỤC THẺ NỘI DUNG (4 CỘT) --- */}
+          {/* Giữ nguyên để căn giữa */}
+          <h2 className={styles.gridTitle}>HOẶC DUYỆT QUA CÁC TRANG CHÍNH</h2>
+
+          <div className={styles.navigationGrid}>
+            {navigationItems.map((item) => (
+              <Link key={item.name} href={item.href} className={styles.navCard}>
+                <div className={styles.cardIcon}>
+                  {iconMap[item.name] || '📄'}
+                </div>
+                <div className={styles.cardTitle}>
+                  {item.name}
+                </div>
+                <p className={styles.cardDescription}>
+                  {item.description}
+                </p>
+              </Link>
+            ))}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
-}
+};
+
+export default HomePage;

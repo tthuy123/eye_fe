@@ -1,0 +1,375 @@
+/* src/app/home.module.css */
+
+/* --- LAYOUT CHUNG --- */
+.container {
+  min-height: 100vh;
+  /* Kế thừa màu nền và chữ từ globals.css */
+}
+
+/* Container giới hạn chiều rộng nội dung chính và căn giữa */
+.mainContentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5rem 1.5rem; 
+  /* THAY ĐỔI: Xóa text-align: center; */
+  /* text-align: center; */ 
+}
+
+/* --- NAVBAR (Hiện đại và nhẹ nhàng) --- */
+.navBar {
+  width: 100%;
+  padding: 1.5rem 3rem;
+  border-bottom: 1px solid rgba(248,245,231,0.2); /* Viền màu be */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(248,245,231,0.05) 0%, rgba(210,55,67,0.02) 100%);
+}
+
+.navLink {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem; /* Giảm kích thước */
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.navLink:hover {
+  color: var(--color-theme-primary-red);
+  opacity: 1;
+  background: rgba(210,55,67,0.1);
+}
+
+/* --- HERO SECTION LAYOUT --- */
+.heroSection {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  margin-bottom: 6rem;
+  min-height: 60vh;
+}
+
+.heroContent {
+  flex: 1;
+  text-align: left;
+}
+
+.logoSection {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- LOGO DESIGN --- */
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.logoCircle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(210,55,67,0.3);
+  animation: logoFloat 6s ease-in-out infinite;
+}
+
+.logoEye {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F8F5E7, #e8e0c7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.logoPupil {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-theme-primary-red);
+  animation: pupilMove 4s ease-in-out infinite;
+}
+
+.logoText {
+  text-align: center;
+}
+
+.logoMain {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-theme-primary-red);
+  font-family: var(--font-title), sans-serif;
+  letter-spacing: -1px;
+}
+
+.logoSub {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-theme-text-dark);
+  opacity: 0.8;
+  margin-top: -0.5rem;
+}
+
+/* Logo Animations */
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+@keyframes pupilMove {
+  0%, 100% { transform: translateX(0px); }
+  25% { transform: translateX(8px); }
+  75% { transform: translateX(-8px); }
+}
+
+/* --- HEADER / HERO SECTION --- */
+.tagline {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  margin-bottom: 1rem;
+  display: inline-block;
+  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
+  color: white;
+}
+
+.headerTitle {
+  font-size: 3.5rem; /* Giảm kích thước để nhẹ nhàng hơn */
+  font-weight: 800; /* Giảm từ 900 xuống 800 */
+  line-height: 1.2; 
+  margin-bottom: 0.5rem;
+  letter-spacing: -1px;
+  color: var(--color-theme-primary-red); 
+  font-family: var(--font-title), sans-serif; 
+  max-width: 12ch;
+  opacity: 0.95; /* Giảm tương phản một chút */
+}
+
+.headerSubtitle {
+  font-size: 1.4rem; /* Giảm kích thước */
+  font-weight: 400;
+  max-width: 600px; 
+  margin: 0 0 3rem 0;
+  opacity: 0.85; /* Giảm tương phản */
+  line-height: 1.5;
+}
+
+/* --- ACTION BUTTONS (Hiện đại và nhẹ nhàng) --- */
+.actionButton {
+  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
+  color: white; 
+  font-weight: 600; /* Giảm từ 700 xuống 600 */
+  font-size: 1rem; /* Giảm kích thước */
+  padding: 0.875rem 2rem; /* Giảm padding */
+  margin: 0 0.5rem;
+  border-radius: 12px; /* Bo tròn hơn */
+  border: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+  text-decoration: none; 
+  box-shadow: 0 4px 12px rgba(210,55,67,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.actionButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(210,55,67,0.4);
+}
+
+.actionButton:hover::before {
+  left: 100%;
+}
+
+
+/* --- BỐ CỤC THẺ NỘI DUNG (GRID) --- */
+.gridTitle {
+    text-align: center; 
+    margin-top: 6rem;
+    margin-bottom: 3rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.9;
+}
+
+.navigationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 5rem;
+}
+
+.navCard {
+  background: linear-gradient(135deg, rgba(248,245,231,0.08) 0%, rgba(210,55,67,0.05) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(248,245,231,0.2);
+  color: var(--foreground);
+  padding: 2rem;
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 200px;
+  text-align: left;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.navCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-theme-primary-red), #ff6b6b);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.navCard:hover {
+  background: linear-gradient(135deg, rgba(210,55,67,0.15) 0%, rgba(248,245,231,0.1) 100%);
+  border-color: rgba(210,55,67,0.4);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(210,55,67,0.2);
+}
+
+.navCard:hover::before {
+  transform: scaleX(1);
+}
+
+.cardIcon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
+  color: white;
+  font-size: 1.25rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(210,55,67,0.3);
+  transition: all 0.3s ease;
+}
+
+.navCard:hover .cardIcon {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 6px 20px rgba(210,55,67,0.4);
+}
+
+.cardTitle {
+  font-size: 1.25rem; 
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+
+.cardDescription {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  opacity: 0.7;
+  color: var(--foreground);
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 1024px) {
+  .heroSection {
+    flex-direction: column;
+    gap: 3rem;
+    text-align: center;
+  }
+  
+  .heroContent {
+    text-align: center;
+  }
+  
+  .logoCircle {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .logoEye {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .logoPupil {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .logoMain {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContentWrapper {
+    padding: 3rem 1rem;
+  }
+  
+  .navBar {
+    padding: 1rem 1.5rem;
+  }
+  
+  .headerTitle {
+    font-size: 2.5rem;
+  }
+  
+  .headerSubtitle {
+    font-size: 1.2rem;
+  }
+  
+  .navigationGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .logoCircle {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .logoEye {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .logoPupil {
+    width: 25px;
+    height: 25px;
+  }
+}
