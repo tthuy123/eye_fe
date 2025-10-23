@@ -30,6 +30,7 @@ export default function WatchesPage() {
   const [nextToken, setNextToken] = useState<string | null>(null);
   const [prevToken, setPrevToken] = useState<string | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null);
+  const [playerLoading, setPlayerLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export default function WatchesPage() {
   const runSearch = async (q: string, pageToken?: string) => {
     setLoading(true);
     setError(null);
+    setPlayerLoading(true);
     try {
       const res = await fetch('/api/youtube/search', {
         method: 'POST',
@@ -66,6 +68,7 @@ export default function WatchesPage() {
       setError(e?.message || 'Lỗi tìm kiếm');
     } finally {
       setLoading(false);
+      setPlayerLoading(false);
     }
   };
 
@@ -100,6 +103,15 @@ export default function WatchesPage() {
     return h > 0 ? `${h}:${pad(mm)}:${pad(ss)}` : `${mm}:${pad(ss)}`;
   };
 
+  const handleVideoSelect = (video: VideoItem) => {
+    setSelectedVideo(video);
+    setPlayerLoading(true);
+  };
+
+  const handlePlayerLoad = () => {
+    setPlayerLoading(false);
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -121,19 +133,29 @@ export default function WatchesPage() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
             aria-label="Ô tìm kiếm video"
+            disabled={loading}
           />
-          <button className={styles.voiceBtn} aria-label="Tìm kiếm bằng giọng nói" onClick={() => runSearch(query || 'Bài tập mắt')}>🎙️</button>
+          <button 
+            className={`${styles.voiceBtn} ${loading ? styles.voiceBtnLoading : ''}`} 
+            aria-label="Tìm kiếm bằng giọng nói" 
+            onClick={() => runSearch(query || 'Bài tập mắt')}
+            disabled={loading}
+          >
+            {loading ? '⏳' : '🎙️'}
+          </button>
         </div>
         <div className={styles.chips}>
           {suggestionChips.map((c) => (
             <button
               key={c}
-              className={`${styles.chip} ${activeChip === c ? styles.chipActive : ''}`}
+              className={`${styles.chip} ${activeChip === c ? styles.chipActive : ''} ${loading ? styles.chipDisabled : ''}`}
               onClick={() => {
+                if (loading) return;
                 const next = activeChip === c ? null : c;
                 setActiveChip(next);
                 void runSearch(next || '');
               }}
+              disabled={loading}
             >
               {c}
             </button>
@@ -147,7 +169,12 @@ export default function WatchesPage() {
       <main className={styles.main}>
         <div className={styles.playerPanel}>
           <div className={styles.playerMock}>
-            <div className={styles.playerScrim} />
+            {playerLoading && (
+              <div className={styles.playerLoadingOverlay}>
+                <div className={styles.loadingSpinner}></div>
+                <span>Đang tải video...</span>
+              </div>
+            )}
             {selectedVideo ? (
               <iframe
                 title={selectedVideo.title}
@@ -155,43 +182,75 @@ export default function WatchesPage() {
                 src={`https://www.youtube.com/embed/${selectedVideo.id}`}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
+                onLoad={handlePlayerLoad}
               />
             ) : (
-              <button className={styles.playerPlay} aria-label="Phát video">▶</button>
+              <div className={styles.playerPlaceholder}>
+                <button className={styles.playerPlay} aria-label="Phát video">▶</button>
+                <p>Chọn video để xem</p>
+              </div>
             )}
           </div>
           <div className={styles.playerMeta}>
-            <h2 className={styles.videoTitle}>{selectedVideo?.title || 'Tiêu đề video đang chọn'}</h2>
-            <div className={styles.videoChannel}>Kênh: {selectedVideo?.channel || '—'}</div>
+            <h2 className={styles.videoTitle}>{selectedVideo?.title || 'Chọn video để xem'}</h2>
+            <div className={styles.videoChannel}>
+              {selectedVideo ? `Kênh: ${selectedVideo.channel}` : 'Chưa có video được chọn'}
+            </div>
           </div>
         </div>
 
         <div className={styles.resultsPanel}>
-          <div className={styles.resultsGrid}>
-            {results.map((v, i) => (
-              <button
-                key={v.id}
-                className={`${styles.card} ${focusedIndex === i ? styles.cardFocused : ''}`}
-                onMouseEnter={() => setFocusedIndex(i)}
-                onFocus={() => setFocusedIndex(i)}
-                onKeyDown={onKeyDown}
-                onClick={() => setSelectedVideo(v)}
-                aria-label={`Chọn video ${v.title} từ kênh ${v.channel}`}
-              >
-                <div className={styles.thumbWrap}>
-                  <div className={styles.thumb} style={{ backgroundImage: `url(${v.thumb})` }} />
-                  <span className={styles.duration}>{formatIsoDuration(v.durationIso)}</span>
+          {loading ? (
+            <div className={styles.skeletonGrid}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className={styles.skeletonCard}>
+                  <div className={styles.skeletonThumb}></div>
+                  <div className={styles.skeletonContent}>
+                    <div className={styles.skeletonTitle}></div>
+                    <div className={styles.skeletonChannel}></div>
+                  </div>
                 </div>
-                <div className={styles.meta}>
-                  <div className={styles.title}>{v.title}</div>
-                  <div className={styles.channel}>{v.channel}</div>
-                </div>
-              </button>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
-            <button disabled={!prevToken || loading} onClick={() => runSearch(query || activeChip || 'Bài tập mắt', prevToken || undefined)} className={styles.chip}>Trang trước</button>
-            <button disabled={!nextToken || loading} onClick={() => runSearch(query || activeChip || 'Bài tập mắt', nextToken || undefined)} className={styles.chip}>Trang sau</button>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.resultsGrid}>
+              {results.map((v, i) => (
+                <button
+                  key={v.id}
+                  className={`${styles.card} ${focusedIndex === i ? styles.cardFocused : ''} ${selectedVideo?.id === v.id ? styles.cardSelected : ''}`}
+                  onMouseEnter={() => setFocusedIndex(i)}
+                  onFocus={() => setFocusedIndex(i)}
+                  onKeyDown={onKeyDown}
+                  onClick={() => handleVideoSelect(v)}
+                  aria-label={`Chọn video ${v.title} từ kênh ${v.channel}`}
+                >
+                  <div className={styles.thumbWrap}>
+                    <div className={styles.thumb} style={{ backgroundImage: `url(${v.thumb})` }} />
+                    <span className={styles.duration}>{formatIsoDuration(v.durationIso)}</span>
+                  </div>
+                  <div className={styles.meta}>
+                    <div className={styles.title}>{v.title}</div>
+                    <div className={styles.channel}>{v.channel}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+          <div className={styles.pagination}>
+            <button 
+              disabled={!prevToken || loading} 
+              onClick={() => runSearch(query || activeChip || 'Bài tập mắt', prevToken || undefined)} 
+              className={`${styles.paginationBtn} ${styles.paginationPrev}`}
+            >
+              ← Trang trước
+            </button>
+            <button 
+              disabled={!nextToken || loading} 
+              onClick={() => runSearch(query || activeChip || 'Bài tập mắt', nextToken || undefined)} 
+              className={`${styles.paginationBtn} ${styles.paginationNext}`}
+            >
+              Trang sau →
+            </button>
           </div>
         </div>
       </main>
