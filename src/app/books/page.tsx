@@ -1,10 +1,30 @@
 // ...existing code...
 "use client";
 import { useEffect, useState, ButtonHTMLAttributes, ReactNode } from "react";
-import { AiOutlineLeft } from "react-icons/ai";
-import { FiSearch } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-import { FaHome } from "react-icons/fa";
+
+/* Inline/simple SVG icons to avoid react-icons dependency */
+function HomeIcon() {
+    return (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M12 3l9 8h-3v8h-4v-6H10v6H6v-8H3z" />
+        </svg>
+    );
+}
+function BackIcon() {
+    return (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z" />
+        </svg>
+    );
+}
+function SearchIcon() {
+    return (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5 21.5 20 15.5 14zM10 15a5 5 0 110-10 5 5 0 010 10z" />
+        </svg>
+    );
+}
 
 /**
  * Temporary placeholders for missing imports (BooksList, GazeButton).
@@ -56,6 +76,7 @@ function BooksList({
                 {visible.map((b) => (
                     <div key={b.id} className="bg-white/5 p-4 rounded">
                         {b.thumb_url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img src={b.thumb_url} alt={b.title} className="w-full h-40 object-cover rounded mb-2" />
                         ) : (
                             <div className="w-full h-40 bg-gray-700 rounded mb-2 flex items-center justify-center text-gray-300">
@@ -237,9 +258,10 @@ export default function BooksPage() {
         <div className="container mx-auto px-4 py-8">
             <GazeButton
                 onClick={() => router.push("/")}
-                className={`absolute top-5 left-10 p-8 rounded-full bg-gray-200 text-black text-5xl shadow-lg`}
+                className={`absolute top-5 left-10 p-4 rounded-full bg-gray-200 text-black text-2xl shadow-lg`}
+                aria-label="home"
             >
-                <FaHome />
+                <HomeIcon />
             </GazeButton>
 
             <div className="mb-6">
@@ -248,7 +270,7 @@ export default function BooksPage() {
                         onClick={() => setShowKeyboard(true)}
                         className="flex items-center gap-2 flex-1 px-5 py-3 rounded-md bg-[#2c2d34] text-white text-xl shadow-inner"
                     >
-                        <FiSearch className="text-gray-400 text-2xl" />
+                        <SearchIcon />
                         <span className={`${searchQuery ? "" : "text-gray-400"}`}>
                             {searchQuery || "Gaze here to search..."}
                         </span>
@@ -261,7 +283,7 @@ export default function BooksPage() {
                         }}
                         className="flex items-center gap-6 px-5 py-3 rounded-md bg-sky-600 text-white font-semibold text-xl shadow-md"
                     >
-                        <FiSearch className="text-white text-xl" />
+                        <SearchIcon />
                         Search
                     </GazeButton>
                 </div>
@@ -272,9 +294,10 @@ export default function BooksPage() {
                     <div className="absolute top-10 left-10 z-50">
                         <GazeButton
                             onClick={() => setShowKeyboard(false)}
-                            className={`p-8 rounded-full bg-[#1e1f25] text-white text-3xl shadow-lg`}
+                            className={`p-4 rounded-full bg-[#1e1f25] text-white text-2xl shadow-lg`}
+                            aria-label="back"
                         >
-                            <AiOutlineLeft />
+                            <BackIcon />
                         </GazeButton>
                     </div>
 
