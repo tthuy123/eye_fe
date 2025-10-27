@@ -208,6 +208,7 @@ export default function BooksPage() {
 
 
 	return (
+        <main className="min-h-[100dvh] bg-[#F5E9DC] text-zinc-900">
 		<div className="container mx-auto px-4 py-8">
 			{/* <Search /> */}
 			{/* Search Box (gaze vào sẽ mở bàn phím) */}
@@ -228,10 +229,10 @@ export default function BooksPage() {
 					{/* Ô nhập bằng ánh mắt */}
 					<GazeButton
 						onClick={() => setShowKeyboard(true)}
-						className="flex items-center gap-2 flex-1 px-5 py-3 rounded-md bg-[#2c2d34] text-white text-xl shadow-inner hover:shadow-md transition"
+						className="flex items-center gap-2 flex-1 px-5 py-3 rounded-md bg-[#E64A4A] text-white text-xl shadow-inner hover:shadow-md transition"
 					>
-						<FiSearch className="text-gray-400 text-2xl" />
-						<span className={`${searchQuery ? "" : "text-gray-400"}`}>
+						<FiSearch className="text-white" />
+						<span className={`${searchQuery ? "" : "text-white"}`}>
 							{searchQuery || "Gaze here to search..."}
 						</span>
 					</GazeButton>
@@ -242,7 +243,7 @@ export default function BooksPage() {
 							handleSearch();
 							setShowKeyboard(false)
 						}}
-						className="flex items-center gap-6 px-5 py-3 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xl shadow-md transition"
+						className="flex items-center gap-6 px-5 py-3 rounded-md bg-[#E64A4A] hover:bg-[#B23636] text-white font-semibold text-xl shadow-md transition"
 					>
 						<FiSearch className="text-white text-xl" />
 						Search
@@ -326,7 +327,7 @@ export default function BooksPage() {
 
 			{/* Category Filter */}
 			<div className="mb-8">
-				<h2 className="text-2xl font-bold mb-4 text-white">Categories</h2>
+				<h2 className="text-2xl font-bold mb-4 text-[#E64A4A]">Categories</h2>
 				<div className="flex flex-wrap gap-8">
 					{DEFAULT_CATEGORIES.map((category, index) => (
 						<GazeButton
@@ -334,9 +335,9 @@ export default function BooksPage() {
 							whileTap={{ scale: 0.9 }}
 							onClick={() => handleCategorySelect(category)}
 							key={index}
-							className={`p-6 rounded-full bg-[#1e1f25] text-white text-xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${selectedCategory === category
-								? "hover:shadow-xl"
-								: "opacity-70"
+							className={`p-6 rounded-full bg-[#E64A4A] text-white text-xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${selectedCategory === category
+								? "hover:shadow-xl bg-[#B23636]"
+								: ""
 								} active:scale-95`}
 						>
 							{category}
@@ -346,7 +347,7 @@ export default function BooksPage() {
 			</div>
 
 			{/* Results Info */}
-			<div className="text-gray-300">
+			<div className="text-[#E64A4A]">
 				{isLoading ? (
 					"Loading books..."
 				) : (
@@ -369,5 +370,6 @@ export default function BooksPage() {
 				/>
 			)}
 		</div>
+        </main>
 	);
 }

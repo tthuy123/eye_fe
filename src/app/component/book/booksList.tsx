@@ -83,7 +83,7 @@ const BooksList: React.FC<BooksListProps> = ({
                 whileTap={{ scale: 0.9 }}
                 onClick={goToPrevious}
                 disabled={currentIndex === 0}
-                className={`p-10 rounded-full bg-[#1e1f25] text-white text-5xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${
+                className={`p-10 rounded-full bg-[#E64A4A] text-white text-5xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${
                   currentIndex === 0
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:shadow-xl"
@@ -111,7 +111,7 @@ const BooksList: React.FC<BooksListProps> = ({
                 whileTap={{ scale: 0.9 }}
                 onClick={goToNext}
                 disabled={currentIndex + booksPerPage >= books.length}
-                className={`p-10 rounded-full bg-[#1e1f25] text-white text-5xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${
+                className={`p-10 rounded-full bg-[#E64A4A] text-white text-5xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${
                   currentIndex + booksPerPage >= books.length
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:shadow-xl"
@@ -122,7 +122,7 @@ const BooksList: React.FC<BooksListProps> = ({
             </motion.div>
             <div className="w-full max-w-[500px] mx-auto bg-[#44474f] rounded-full h-4 my-4">
               <div
-                className="bg-[#adc6ff] h-4 rounded-full transition-width duration-300"
+                className="bg-[#E64A4A] h-4 rounded-full transition-width duration-300"
                 style={{ width: `${(currentPage / totalPages) * 100}%` }}
               ></div>
             </div>
