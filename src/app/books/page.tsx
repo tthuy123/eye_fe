@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import BooksList from "../component/book/booksList";
-import GazeButton from "../component/gazeButton";
-import Search from "../component/search";
+import BooksList from "@/component/book/booksList";
+import GazeButton from "@/component/gazeButton";
+import Search from "@/component/search";
 import { AiOutlineLeft } from "react-icons/ai";
 import { FiSearch } from "react-icons/fi";
 import { useRouter } from "next/navigation";
@@ -254,7 +254,7 @@ export default function BooksPage() {
 
 
 			{showKeyboard && (
-				<div className="fixed inset-0 z-50 bg-gray-200 bg-opacity-90 flex flex-col items-center justify-center space-y-4 p-4">
+				<div className="fixed inset-0 z-50 bg-[#F5E9DC] bg-opacity-90 flex flex-col items-center justify-center space-y-4 p-4">
 					<div className="absolute top-10 left-10 z-50">
 						<GazeButton
 							whileHover={{ scale: 1.2 }}
@@ -316,7 +316,7 @@ export default function BooksPage() {
 								setShowKeyboard(false)
 							}
 							}
-							className="w-48 h-24 bg-green-600 text-white rounded-md text-2xl"
+							className="w-48 h-24 bg-[#E64A4A] text-white rounded-md text-2xl"
 						>
 							Search
 						</GazeButton>
