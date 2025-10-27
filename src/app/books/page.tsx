@@ -1,242 +1,264 @@
-
 "use client";
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import BooksList from "../component/book/booksList";
 import GazeButton from "../component/gazeButton";
+import Search from "../component/search";
 import { AiOutlineLeft } from "react-icons/ai";
-import { GazeScrollButton } from "../component/button/gazeScrollButton";
-import AutoScrollToggle from "../component/button/autoScrollButton";
-import SpeakButton from "../component/button/speakButton";
+import { FiSearch } from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { FaHome } from "react-icons/fa";
 
-type Chapter = {
+interface Book {
 	id: string;
 	title: string;
-	content: string[];
-};
-
-type Novel = {
-	id: string;
-	title: string;
-	author: string;
-	description: string;
-	thumbnail: string;
-	chapters: Chapter[];
-	metadata: {
-		publisher?: string;
-		language?: string;
-		releaseDate?: string;
+	author?: string;
+	coverImage?: string;
+	slug: string;
+	thumb_url: string;
+	name: string;
+	chaptersLatest: any;
+	category: string; // Added category property
+	volumeInfo: {
+		categories?: string[];
+		[key: string]: any;
 	};
-};
+}
 
-export default function NovelReaderPage() {
-	const params = useParams();
+const DEFAULT_CATEGORIES = [
+	"Novel", "Fiction", "Literature",
+	"Fantasy", "Mystery", "Romance", "History", "Comics"
+];
+
+export default function BooksPage() {
 	const router = useRouter();
-	const [novel, setNovel] = useState<Novel | null>(null);
-	const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [isReading, setIsReading] = useState(false);
+	const [currentIndex, setCurrentIndex] = useState(0);
+	const [books, setBooks] = useState<Book[]>([]);
+	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
-	const paragraphsPerPage = 8;
+	const booksPerPage = 4;
+	const [searchQuery, setSearchQuery] = useState("");
+	const [searchTerm, setSearchTerm] = useState("");
+	const [showKeyboard, setShowKeyboard] = useState(false);
 
-	// Fetch novel data
+
+	// Fetch books whenever category changes
 	useEffect(() => {
-		const fetchNovel = async () => {
+		const fetchBooks = async () => {
+			setIsLoading(true);
 			try {
-				const response = await fetch(`/api/proxy?title=${params?.slug}`);
-				const data = await response.json();
-				console.log("Book detail response:", data);
-				const bookData = (data as { results: any[] })?.results?.[0] || null;
-				if (bookData) {
-					// Lấy nội dung sách từ link HTML
-					const htmlUrl = bookData.formats["text/html"];
-					console.log(htmlUrl)
-					const thumbnailUrl = bookData.formats["image/jpeg"];
-					const htmlResponse = await fetch(`/api/process_book?bookId=${bookData.id}`);
-					const htmlContent = await htmlResponse.json();
-					console.log(htmlContent)
+				const query = selectedCategory || "Novel";
+				if (query === "Comics") {
+					// // const response = await fetch(
+					// // 	`https://api.mangadex.org/manga?limit=20&order[relevance]=desc&includes[]=cover_art`
+					// // );
+					// const response = await fetch(
+					// 	`https://api.mangadex.org/manga?limit=20&title=doraemon&includes[]=cover_art`
+					//   );
+					const doraemonRes = await fetch(
+						`https://api.mangadex.org/manga?limit=10&title=doraemon&includes[]=cover_art`
+					);
+					const doraemonData = await doraemonRes.json();
 
-					const parsedChapters: Chapter[] = htmlContent.chapters
-						.filter((ch: any) =>
-							typeof ch.title === "string" &&
-							ch.title.toLowerCase().includes("chapter") &&
-							Array.isArray(ch.content) && ch.content.length > 0
-						)
-						.map((ch: any, idx: number) => ({
-							id: `chapter-${idx + 1}`,
-							title: ch.title.replace(/\n/g, ' ').trim(),
-							content: ch.content
-						}));
+					const popularRes = await fetch(
+						`https://api.mangadex.org/manga?limit=30&order[followedCount]=desc&includes[]=cover_art`
+					);
+					const popularData = await popularRes.json();
 
-					// Tạo đối tượng novel từ dữ liệu
-					const novelData: Novel = {
-						id: params?.slug as string,
-						title: bookData.title,
-						author: bookData.authors?.[0]?.name || "",
-						description: bookData.summaries[0] || "",
-						thumbnail: thumbnailUrl || "/default-cover.jpg",
-						chapters: parsedChapters,
-						metadata: {
-							publisher: "Project Gutenberg",
-							language: bookData.languages?.[0] || "English",
-							releaseDate: bookData.release_date || "Unknown"
+					const combined = [...doraemonData.data, ...popularData.data];
+					shuffle(combined);
+
+					const MAX_WORD_COUNT = 8;
+
+					const data = combined.filter(manga => {
+						// const titleObj = manga.attributes?.title || manga.attributes?.altTitles?.find((alt: any) => alt?.en);
+						// const title = titleObj?.en || titleObj?.ja || Object.values(titleObj || {})[0] || '';
+						const titleObj = manga.attributes?.title;
+						let title = titleObj?.en;
+
+						// Nếu không có title en, lấy từ altTitles
+						if (!title) {
+							title = manga.attributes?.altTitles?.find((alt: any) => alt?.en)?.en;
 						}
-					};
 
-					setNovel(novelData);
+						// Nếu không có title en hay altTitles, sử dụng title mặc định từ các ngôn ngữ khác
+						if (!title) {
+							title = titleObj?.ja || Object.values(titleObj || {})[0] || 'No title available';
+						}
+
+						const wordCount = title.trim().split(/\s+/).length;
+						return wordCount <= MAX_WORD_COUNT;
+					});
+					// const data = await response.json();
+					console.log(data)
+
+					const processedBooks = data?.map((manga: any) => {
+						const id = manga.id;
+						const attributes = manga.attributes;
+						let title = attributes?.title?.en;
+						if (!title) {
+							const altEn = attributes?.altTitles?.find((alt: any) => alt?.en);
+							title = altEn?.en || "Untitled";
+						}
+
+						// Tìm cover ảnh từ relationships
+						const coverArt = manga.relationships.find((rel: any) => rel.type === "cover_art");
+						const fileName = coverArt?.attributes?.fileName;
+
+						const coverImage = fileName
+							? `https://uploads.mangadex.org/covers/${id}/${fileName}.256.jpg`
+							: "";
+
+						return {
+							id,
+							title,
+							name: title,
+							slug: title,
+							author: attributes?.author || "Unknown",
+							coverImage,
+							thumb_url: coverImage,
+							category: "comics",
+						};
+					}) || [];
+					setBooks(processedBooks);
+				} else {
+					const response = await fetch(
+						`https://www.googleapis.com/books/v1/volumes?q=subject:${encodeURIComponent(query)}&maxResults=40`
+					);
+					const data = await response.json();
+					console.log("Books data:", data);
+					const processedBooks = data?.items
+						?.filter((item: any) => item.volumeInfo?.imageLinks?.thumbnail)
+						.map((item: any) => ({
+							id: item.id,
+							title: item.volumeInfo?.title || "Untitled",
+							author: item.volumeInfo?.authors?.join(", ") || "Unknown",
+							coverImage: item.volumeInfo?.imageLinks?.thumbnail,
+							slug: item.volumeInfo?.title || "Untitled",
+							thumb_url: item.volumeInfo?.imageLinks?.thumbnail,
+							name: item.volumeInfo?.title || "Untitled",
+							volumeInfo: item.volumeInfo,
+							category: query, // Assign the selected category
+						})) || [];
+
+					setBooks(processedBooks);
 				}
-				// setNovel(bookData);
 			} catch (error) {
-				console.error("Failed to fetch novel:", error);
+				console.error("Fetch error:", error);
 			} finally {
 				setIsLoading(false);
 			}
 		};
 
-		fetchNovel();
-	}, [params?.slug]);
+		fetchBooks();
+	}, [selectedCategory]); // Chỉ chạy khi selectedCategory thay đổi
 
-	// Reset page when chapter changes
-	useEffect(() => {
-		setCurrentPage(1);
-	}, [currentChapterIndex]);
-
-	const renderGutenbergHeader = () => (
-		<div id="pg-header" className="mb-4 text-center">
-			<h1 id="pg-header-heading" className="text-3xl font-bold mb-4">
-				{novel?.title}
-			</h1>
-			<div className="text-xl mb-6">by {novel?.author}</div>
-
-			<div id="pg-start-separator" className="my-10 border-t border-gray-300 w-1/2 mx-auto"></div>
-
-		</div>
-	);
-
-
-	const renderReadingContent = () => {
-		if (!novel) return null;
-
-		const chapter = novel.chapters[currentChapterIndex];
-		const startIdx = (currentPage - 1) * paragraphsPerPage;
-		const endIdx = startIdx + paragraphsPerPage;
-		const visibleParagraphs = chapter.content.slice(startIdx, endIdx);
-		const totalPages = Math.ceil(chapter.content.length / paragraphsPerPage);
-
-		return (
-			<div>
-				<div className="fixed right-16 top-1/2 transform -translate-y-1/2 flex flex-col gap-6 z-50">
-					<GazeScrollButton direction="up" />
-					<AutoScrollToggle />
-					<GazeScrollButton direction="down" />
-					<SpeakButton text={visibleParagraphs.join(" ")} />
-				</div>
-
-				<div className="max-w-3xl mx-auto">
-					{/* Chapter Navigation */}
-					<div className="flex justify-between items-center mb-8 bg-gray-50 p-4 rounded-lg">
-						<GazeButton
-							onClick={() => setCurrentChapterIndex(i => Math.max(0, i - 1))}
-							disabled={currentChapterIndex === 0}
-							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-							whileHover={{ scale: 1.05 }}
-						>
-							← Previous Chapter
-						</GazeButton>
-
-						<span className="font-medium text-lg">
-							{chapter.title}
-						</span>
-
-						<GazeButton
-							onClick={() => setCurrentChapterIndex(i => Math.min(novel.chapters.length - 1, i + 1))}
-							disabled={currentChapterIndex === novel.chapters.length - 1}
-							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-							whileHover={{ scale: 1.05 }}
-						>
-							Next Chapter →
-						</GazeButton>
-					</div>
-
-					{/* Chapter Content */}
-					<div className="prose lg:prose-xl mx-auto">
-						{visibleParagraphs.map((para, idx) => (
-							<motion.p
-								key={idx}
-								className="text-justify indent-8 my-4 leading-relaxed"
-								initial={{ opacity: 0, y: 10 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.3, delay: idx * 0.05 }}
-							>
-								{para}
-							</motion.p>
-						))}
-					</div>
-
-					{/* Page Navigation */}
-					<div className="flex justify-between items-center mt-10 mb-16">
-						<GazeButton
-							onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-							disabled={currentPage === 1}
-							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-							whileHover={{ scale: 1.05 }}
-						>
-							← Previous Page
-						</GazeButton>
-
-						<span className="text-gray-600">
-							Page {currentPage} of {totalPages}
-						</span>
-
-						<GazeButton
-							onClick={() => setCurrentPage(p => p + 1)}
-							disabled={currentPage >= totalPages}
-							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-							whileHover={{ scale: 1.05 }}
-						>
-							Next Page →
-						</GazeButton>
-					</div>
-				</div>
-			</div>
-		);
+	const handleCategorySelect = (category: string) => {
+		setSelectedCategory(prev => prev === category ? null : category);
+		setCurrentIndex(0); // Reset pagination khi đổi category
 	};
 
-	if (isLoading) {
-		return (
-			<div className="flex justify-center items-center h-screen">
-				<motion.div
-					animate={{ rotate: 360 }}
-					transition={{ repeat: Infinity, duration: 1 }}
-					className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
-				/>
-			</div>
-		);
+	function shuffle(array: any[]) {
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
 	}
 
-	if (!novel) {
-		return (
-			<div className="text-center py-20">
-				<h1 className="text-2xl font-bold mb-4">Novel Not Found</h1>
-				<GazeButton
-					onClick={() => router.back()}
-					className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-				>
-					Go Back
-				</GazeButton>
-			</div>
+	// Pagination controls
+	const goToNext = () => {
+		if (currentIndex + booksPerPage < books.length) {
+			setCurrentIndex(prev => prev + booksPerPage);
+		}
+	};
+
+	const goToPrevious = () => {
+		if (currentIndex - booksPerPage >= 0) {
+			setCurrentIndex(prev => prev - booksPerPage);
+		}
+	};
+
+	const handleSearch = async () => {
+		console.log(searchQuery)
+		setSearchTerm(searchQuery);
+		setSelectedCategory(null);
+		const response = await fetch(
+			`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(searchQuery)}&maxResults=40`
 		);
-	}
+		const data = await response.json();
+		console.log(data)
+		let processedBooks: Book[] = [];
+		processedBooks = data?.items?.filter((item: any) => item.volumeInfo?.imageLinks?.thumbnail)
+			.map((item: any) => ({
+				id: item.id,
+				title: item.volumeInfo?.title || "Untitled",
+				author: item.volumeInfo?.authors?.join(", ") || "Unknown",
+				coverImage: item.volumeInfo?.imageLinks?.thumbnail,
+				slug: item.volumeInfo?.title || "Untitled",
+				thumb_url: item.volumeInfo?.imageLinks?.thumbnail,
+				name: item.volumeInfo?.title || "Untitled",
+				volumeInfo: item.volumeInfo,
+				category: selectedCategory || "Novel",
+			})) || [];
+
+		console.log(processedBooks)
+
+		setBooks(processedBooks);
+		setCurrentIndex(0);
+	};
+
 
 	return (
-		<div className="bg-white min-h-screen py-10 px-4 sm:px-6">
-			{!isReading ? (
-				<div>
+		<div className="container mx-auto px-4 py-8">
+			{/* <Search /> */}
+			{/* Search Box (gaze vào sẽ mở bàn phím) */}
+
+			<GazeButton
+				whileHover={{ scale: 1.2 }}
+				whileTap={{ scale: 0.9 }}
+				onClick={() => router.push("/")}
+
+				className={`absolute top-5 left-10 p-8 rounded-full bg-gray-200 text-black text-5xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${"hover:shadow-xl"
+					} active:scale-95`}
+			>
+				< FaHome />
+			</GazeButton>
+			<div className="mb-6">
+
+				<div className="flex gap-8 items-center w-full max-w-4xl mx-auto">
+					{/* Ô nhập bằng ánh mắt */}
+					<GazeButton
+						onClick={() => setShowKeyboard(true)}
+						className="flex items-center gap-2 flex-1 px-5 py-3 rounded-md bg-[#2c2d34] text-white text-xl shadow-inner hover:shadow-md transition"
+					>
+						<FiSearch className="text-gray-400 text-2xl" />
+						<span className={`${searchQuery ? "" : "text-gray-400"}`}>
+							{searchQuery || "Gaze here to search..."}
+						</span>
+					</GazeButton>
+
+					{/* Nút Search */}
+					<GazeButton
+						onClick={() => {
+							handleSearch();
+							setShowKeyboard(false)
+						}}
+						className="flex items-center gap-6 px-5 py-3 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xl shadow-md transition"
+					>
+						<FiSearch className="text-white text-xl" />
+						Search
+					</GazeButton>
+				</div>
+			</div>
+
+
+
+			{showKeyboard && (
+				<div className="fixed inset-0 z-50 bg-gray-200 bg-opacity-90 flex flex-col items-center justify-center space-y-4 p-4">
 					<div className="absolute top-10 left-10 z-50">
 						<GazeButton
 							whileHover={{ scale: 1.2 }}
 							whileTap={{ scale: 0.9 }}
-							onClick={() => router.push("/books")}
+							onClick={() => setShowKeyboard(false)}
 
 							className={`p-8 rounded-full bg-[#1e1f25] text-white text-3xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${"hover:shadow-xl"
 								} active:scale-95`}
@@ -244,91 +266,107 @@ export default function NovelReaderPage() {
 							<AiOutlineLeft />
 						</GazeButton>
 					</div>
-					
-					<div className="p-6 flex flex-col items-center justify-center">
-						<div className="flex items-start gap-10 mb-8 w-full max-w-5xl">
-							{/* Ảnh bên trái */}
-							<img
-								src={novel.thumbnail}
-								alt={novel.title}
-								className="w-96 h-auto object-cover rounded-lg shadow-lg"
-							/>
-
-							{/* Nội dung bên phải */}
-							<div className="flex-1 flex flex-col">
-								<h1 className="text-4xl font-bold mb-4 text-black text-left">
-									{novel.title}
-								</h1>
-								<p className="text-lg text-black mb-6 mt-6 text-left">
-									{novel.description.length > 500
-										? novel.description.slice(0, 500) + "..."
-										: novel.description}
-								</p>
-								
-							</div>
-						</div>
-						<GazeButton
-							onClick={() => setIsReading(true)}
-							className="px-10 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 text-black text-xl w-fit"
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-						>
-							Start Reading
-						</GazeButton>
+					{/* Thanh hiển thị nội dung đã nhập */}
+					<div className="w-full max-w-4xl bg-white text-black rounded-md  p-3 text-xl text-left shadow-md mb-16">
+						{searchQuery || <span className="text-gray-400">Start typing by looking at keys...</span>}
+					</div>
+					<div className="grid grid-cols-9 gap-4">
+						{"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((char) => (
+							<GazeButton
+								key={char}
+								onClick={() => setSearchQuery((prev) => prev + char)}
+								className="w-24 h-24 text-white text-lg bg-[#1e1f25] rounded-md"
+							>
+								{char}
+							</GazeButton>
+						))}
 					</div>
 
+					{/* Space + Backspace */}
+					<div className="flex gap-4 mt-4">
+						<GazeButton
+							onClick={() => setSearchQuery((prev) => prev + " ")}
+							className="w-48 h-24 bg-gray-600 text-white rounded-md text-2xl"
+						>
+							Space
+						</GazeButton>
 
+						<GazeButton
+							onClick={() =>
+								setSearchQuery((prev) => prev.slice(0, prev.length - 1))
+							}
+							className="w-48 h-24 bg-gray-600 text-white rounded-md text-2xl"
+						>
+							Backspace
+						</GazeButton>
 
-					{/* <motion.div
-						initial={false}
-						animate={{ opacity: 1 }}
-						transition={{ duration: 0.5 }}
-						className="max-w-4xl mx-auto"
-					>
-						{/* {renderGutenbergHeader()} */}
+						<GazeButton
+							onClick={() =>
+								setSearchQuery('')
+							}
+							className="w-48 h-24 bg-gray-600 text-white rounded-md text-2xl"
+						>
+							Delete All
+						</GazeButton>
 
-					{/* <div className="flex flex-col items-center my-16 gap-6 mb-8">
-							<motion.img
-								src={novel.thumbnail}
-								alt={novel.title}
-								className="w-64 h-96 object-cover rounded-lg shadow-xl"
-								whileHover={{ scale: 1.03 }}
-							/>
-							<GazeButton
-								onClick={() => setIsReading(true)}
-								className="px-8 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 text-black text-xl rounded-lg hover:bg-gray-300"
-								whileHover={{ scale: 1.05 }}
-								whileTap={{ scale: 0.95 }}
-							>
-								Start Reading
-							</GazeButton>
-						</div> */}
-
-					{/* {renderGutenbergFooter()} */}
-					{/* </motion.div> */}
+						<GazeButton
+							onClick={() => {
+								handleSearch();
+								setShowKeyboard(false)
+							}
+							}
+							className="w-48 h-24 bg-green-600 text-white rounded-md text-2xl"
+						>
+							Search
+						</GazeButton>
+					</div>
 				</div>
-			) : (
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={{ duration: 0.5 }}
-				>
-					{/* Back Button */}
-					<div className="max-w-4xl ml-8 mb-6 fixed justify-start">
+			)}
+
+
+			{/* Category Filter */}
+			<div className="mb-8">
+				<h2 className="text-2xl font-bold mb-4 text-white">Categories</h2>
+				<div className="flex flex-wrap gap-8">
+					{DEFAULT_CATEGORIES.map((category, index) => (
 						<GazeButton
 							whileHover={{ scale: 1.2 }}
 							whileTap={{ scale: 0.9 }}
-							onClick={() => setIsReading(false)}
-
-							className={`p-8 rounded-full bg-[#1e1f25] text-white text-3xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${"hover:shadow-xl"
+							onClick={() => handleCategorySelect(category)}
+							key={index}
+							className={`p-6 rounded-full bg-[#1e1f25] text-white text-xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${selectedCategory === category
+								? "hover:shadow-xl"
+								: "opacity-70"
 								} active:scale-95`}
 						>
-							<AiOutlineLeft />
+							{category}
 						</GazeButton>
-					</div>
+					))}
+				</div>
+			</div>
 
-					{renderReadingContent()}
-				</motion.div>
+			{/* Results Info */}
+			<div className="text-gray-300">
+				{isLoading ? (
+					"Loading books..."
+				) : (
+					`Showing ${Math.min(currentIndex + booksPerPage, books.length)} of ${books.length} 
+          ${selectedCategory ? `${selectedCategory} ` : ""}books`
+				)}
+			</div>
+
+			{/* Books List */}
+			{isLoading ? (
+				<div className="flex justify-center items-center h-64">
+					<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+				</div>
+			) : (
+				<BooksList
+					books={books}
+					currentIndex={currentIndex}
+					goToNext={goToNext}
+					goToPrevious={goToPrevious}
+				/>
 			)}
 		</div>
 	);
