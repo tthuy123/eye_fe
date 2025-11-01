@@ -1,20 +1,22 @@
+// src/app/games/page.tsx
 "use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Image from "next/image"; // <-- 1. IMPORT IMAGE
 
 export default function Page() {
   return (
     <main className="min-h-[100dvh] bg-[#F5E9DC] text-zinc-900">
       {/* Header */}
       <header className="mx-auto max-w-6xl px-4 sm:px-6 py-12 text-center">
-<h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight">
-GAME CENTER
-</h1>
-<p className="mt-4 max-w-2xl mx-auto text-base sm:text-lg">
-Chọn một trò chơi để bắt đầu. Chúc bạn chơi vui vẻ!
-</p>
-</header>
+        <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight">
+          GAME CENTER
+        </h1>
+        <p className="mt-4 max-w-2xl mx-auto text-base sm:text-lg">
+          Chọn một trò chơi để bắt đầu. Chúc bạn chơi vui vẻ!
+        </p>
+      </header>
 
       {/* Game grid */}
       <section aria-label="Danh sách trò chơi" className="mx-auto max-w-6xl px-4 sm:px-6 pb-16">
@@ -25,6 +27,8 @@ Chọn một trò chơi để bắt đầu. Chúc bạn chơi vui vẻ!
               description="Nhìn vào bong bóng để làm nổ, tích điểm và hiệu ứng vui nhộn."
               href="/games/catch-the-bubbles"
               emoji="🫧"
+              // 4. TRUYỀN PROP ẢNH VÀO CARD
+              previewImageUrl="/images/preview-bubbles.png"
             />
           </li>
           <li>
@@ -33,6 +37,8 @@ Chọn một trò chơi để bắt đầu. Chúc bạn chơi vui vẻ!
               description="Nhìn lần lượt vào hình và từ tương ứng trong 3s để ghép đúng."
               href="/games/look-match"
               emoji="🔤"
+              // 4. TRUYỀN PROP ẢNH VÀO CARD
+              previewImageUrl="/images/look_match.png"
             />
           </li>
         </ul>
@@ -46,11 +52,13 @@ function GameCard({
   description,
   href,
   emoji,
+  previewImageUrl, // <-- 2. THÊM PROP previewImageUrl
 }: {
   title: string;
   description: string;
   href: string;
   emoji?: string;
+  previewImageUrl: string; // <-- 2. THÊM PROP previewImageUrl
 }) {
   return (
     <motion.div
@@ -66,7 +74,7 @@ function GameCard({
         <article
           className="relative overflow-hidden rounded-2xl shadow-lg ring-1 ring-zinc-200 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60"
         >
-          {/* Bold red title band (inspired by reference image) */}
+          {/* Bold red title band */}
           <div className="bg-[#D93636] text-white">
             <div className="flex items-center justify-between px-6 py-5 sm:px-8">
               <h2 className="text-2xl sm:text-3xl font-black leading-tight">
@@ -78,22 +86,20 @@ function GameCard({
             </div>
           </div>
 
-          {/* Content strip with level blocks */}
-          <div className="grid grid-cols-2 gap-4 px-6 sm:px-8 py-6 bg-[#F5E9DC]">
-            {/* stylized level tiles to echo the red panels in the reference */}
-            {["LV1", "LV2", "LV3", "LV4"].map((lv) => (
-              <div
-                key={lv}
-                className="aspect-[4/3] rounded-xl bg-[#E64A4A] text-white flex items-center justify-center text-xl sm:text-2xl font-extrabold shadow-md"
-                aria-hidden
-              >
-                {lv}
-              </div>
-            ))}
+          {/* 3. THAY THẾ GRID LEVEL BẰNG IMAGE */}
+          <div className="relative w-full aspect-video bg-[#F5E9DC]">
+            <Image
+              src={previewImageUrl}
+              alt={`Xem trước game ${title}`}
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
           </div>
+          {/* KẾT THÚC PHẦN THAY THẾ */}
 
           {/* Footer with large primary button */}
-          <div className="px-6 sm:px-8 pb-6">
+          <div className="px-6 sm:px-8 pb-6 pt-6"> {/* Thêm pt-6 để tạo khoảng cách */}
             <p className="mt-4 text-sm sm:text-base text-zinc-700 max-w-prose">
               {description}
             </p>
@@ -106,7 +112,6 @@ function GameCard({
               BẮT ĐẦU CHƠI
             </button>
 
-            {/* Accessibility notes: big hit area & keyboard focus */}
             <p className="sr-only">Nút lớn, tối thiểu 56px chiều cao, hỗ trợ Enter/Space khi dùng bàn phím.</p>
           </div>
 
