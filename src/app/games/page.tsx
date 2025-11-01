@@ -24,7 +24,7 @@ export default function Page() {
           <li>
             <GameCard
               title="Catch the Bubbles"
-              description="Nhìn vào bong bóng để làm nổ, tích điểm và hiệu ứng vui nhộn."
+              description="Nhìn vào bong bóng để làm nổ và ghi điểm!"
               href="/games/catch-the-bubbles"
               emoji="🫧"
               // 4. TRUYỀN PROP ẢNH VÀO CARD
@@ -34,7 +34,7 @@ export default function Page() {
           <li>
             <GameCard
               title="Look & Match"
-              description="Nhìn lần lượt vào hình và từ tương ứng trong 3s để ghép đúng."
+              description="Nhìn lần lượt vào hình và từ tương ứng để ghép đúng."
               href="/games/look-match"
               emoji="🔤"
               // 4. TRUYỀN PROP ẢNH VÀO CARD
