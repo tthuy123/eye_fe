@@ -33,7 +33,7 @@ export default function SpeakButton({ text }: { text: string }) {
 					speak(text);
 				}
 			}}
-			className={`p-10 rounded-full text-white text-xl shadow-lg transform transition-transform duration-300 ${isSpeaking ? "bg-red-600 hover:bg-red-700" : "bg-[#1e1f25] hover:scale-110 hover:shadow-xl"
+			className={`p-10 rounded-full text-white text-xl shadow-lg transform transition-transform duration-300 ${isSpeaking ? "bg-red-600 hover:bg-red-700" : "bg-[#E64A4A] hover:scale-110 hover:shadow-xl"
 				} active:scale-95`}
 		>
 			{/* {isSpeaking ? "⏹" : "🔊"} */}

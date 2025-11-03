@@ -134,11 +134,11 @@ export default function NovelReaderPage() {
 
 				<div className="max-w-3xl mx-auto">
 					{/* Chapter Navigation */}
-					<div className="flex justify-between items-center mb-8 bg-gray-50 p-4 rounded-lg">
+					<div className="flex justify-between items-center mb-8 bg-[#F5E9DC] p-4 rounded-lg">
 						<GazeButton
 							onClick={() => setCurrentChapterIndex(i => Math.max(0, i - 1))}
 							disabled={currentChapterIndex === 0}
-							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+							className="px-5 py-6 bg-[#E64A4A] rounded-lg hover:bg-[#F5E9DC] disabled:opacity-50"
 							whileHover={{ scale: 1.05 }}
 						>
 							← Previous Chapter
@@ -151,7 +151,7 @@ export default function NovelReaderPage() {
 						<GazeButton
 							onClick={() => setCurrentChapterIndex(i => Math.min(novel.chapters.length - 1, i + 1))}
 							disabled={currentChapterIndex === novel.chapters.length - 1}
-							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+							className="px-5 py-6 bg-[#E64A4A] rounded-lg hover:bg-[#F5E9DC] disabled:opacity-50"
 							whileHover={{ scale: 1.05 }}
 						>
 							Next Chapter →
@@ -229,7 +229,7 @@ export default function NovelReaderPage() {
 	}
 
 	return (
-		<div className="bg-white min-h-screen py-10 px-4 sm:px-6">
+		<div className="min-h-screen bg-[#F5E9DC] text-zinc-900 overflow-hidden">
 			{!isReading ? (
 				<div>
 					<div className="absolute top-10 left-10 z-50">
@@ -238,7 +238,7 @@ export default function NovelReaderPage() {
 							whileTap={{ scale: 0.9 }}
 							onClick={() => router.push("/books")}
 
-							className={`p-8 rounded-full bg-[#1e1f25] text-white text-3xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${"hover:shadow-xl"
+							className={`p-8 rounded-full bg-[#E64A4A] text-white text-3xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${"hover:shadow-xl"
 								} active:scale-95`}
 						>
 							<AiOutlineLeft />
@@ -269,7 +269,7 @@ export default function NovelReaderPage() {
 						</div>
 						<GazeButton
 							onClick={() => setIsReading(true)}
-							className="px-10 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 text-black text-xl w-fit"
+							className="px-10 py-6 bg-[#E64A4A] rounded-lg hover:bg-gray-300 text-black text-xl w-fit"
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 						>
@@ -320,7 +320,7 @@ export default function NovelReaderPage() {
 							whileTap={{ scale: 0.9 }}
 							onClick={() => setIsReading(false)}
 
-							className={`p-8 rounded-full bg-[#1e1f25] text-white text-3xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${"hover:shadow-xl"
+							className={`p-8 rounded-full bg-[#E64A4A] text-white text-3xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${"hover:shadow-xl"
 								} active:scale-95`}
 						>
 							<AiOutlineLeft />
