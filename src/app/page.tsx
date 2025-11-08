@@ -17,7 +17,7 @@ const iconMap: { [key: string]: string } = {
 // Định nghĩa các trang chính (Giữ nguyên)
 const navigationItems = [
   { name: 'XEM YOUTUBE', description: 'Video, tìm kiếm & điều khiển bằng giọng nói.', href: '/watches' },
-  { name: 'ĐỌC TRUYỆN', description: 'Truyện chữ, sách nói & điều khiển bằng giọng nói.', href: '/stories' },
+  { name: 'ĐỌC TRUYỆN', description: 'Truyện chữ, sách nói & điều khiển bằng giọng nói.', href: '/books' },
   { name: 'TRÒ CHƠI', description: '1-2 Game vận động mắt đơn giản.', href: '/games' },
   { name: 'HỖ TRỢ GIỌNG NÓI', description: 'Thiết lập và điều khiển toàn bộ ứng dụng.', href: '/voice-config' }, 
 ];
