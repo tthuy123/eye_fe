@@ -335,8 +335,8 @@ export default function BooksPage() {
 							whileTap={{ scale: 0.9 }}
 							onClick={() => handleCategorySelect(category)}
 							key={index}
-							className={`p-6 rounded-full bg-[#E64A4A] text-white text-xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${selectedCategory === category
-								? "hover:shadow-xl bg-[#B23636]"
+							className={`w-40 h-16 flex items-center justify-center text-center p-4 rounded-full bg-[#E64A4A] text-white text-lg shadow-lg transform transition-transform duration-300 hover:scale-110 ${selectedCategory === category
+								? "shadow-xl bg-[#B23636]"
 								: ""
 								} active:scale-95`}
 						>

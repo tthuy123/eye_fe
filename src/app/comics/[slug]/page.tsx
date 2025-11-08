@@ -391,8 +391,8 @@ export default function BookDetail() {
 	);
 
 	return (
-		<main className="min-h-[100dvh] bg-[#F5E9DC] text-zinc-900">
-		<div className="container mx-auto p-6 flex flex-col items-center justify-center h-screen mt-10">
+		<main className="min-h-screen bg-[#F5E9DC] text-zinc-900 overflow-hidden">
+        <div className="container mx-auto p-6 flex flex-col items-center justify-center min-h-screen">
 			<div className="flex items-start space-x-8 mb-16">
 				<img
 					src={book.thumb_url}

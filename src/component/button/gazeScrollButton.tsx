@@ -50,7 +50,7 @@ export function GazeScrollButton({
 	return (
 		<GazeButton
 			onClick={handleScroll}
-			className={`p-10 rounded-full bg-[#1e1f25] text-white text-2xl shadow-lg transform transition-transform duration-300 hover:scale-110 hover:shadow-xl active:scale-95 
+			className={`p-10 rounded-full bg-[#E64A4A] text-white text-2xl shadow-lg transform transition-transform duration-300 hover:scale-110 hover:shadow-xl active:scale-95 
 				${isDisabled
 					? "opacity-50 cursor-not-allowed"
 					: "hover:shadow-xl"
