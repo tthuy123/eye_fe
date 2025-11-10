@@ -1,34 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --color-theme-background: #111111;  /* Nền Đen Đậm (gần như Black) */
-  --color-theme-text-dark: #F8F5E7;   /* Màu chữ sáng (Be) */
-  --color-theme-primary-red: #D23743; /* Màu Đỏ chủ đạo (Điểm nhấn) */
-  
-  /* Đặt mặc định là Dark Theme */
-  --background: var(--color-theme-background); 
-  --foreground: var(--color-theme-text-dark); 
+  --color-theme-background: #f8f1e4;
+  --color-theme-text-dark: #3b3128;
+  --color-theme-primary-red: #d23743;
+
+  --background: var(--color-theme-background);
+  --foreground: var(--color-theme-text-dark);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter); /* Đặt font-sans là Inter */
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
-  /* Thêm biến font cho tiêu đề nếu muốn */
-  --font-title: var(--font-be-vietnam-pro); 
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #F8F5E7;
-    --foreground: #111111;
-  }
+  --font-title: var(--font-be-vietnam-pro);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), sans-serif; 
-  font-size: 1.15rem; 
+  font-family: var(--font-sans), sans-serif;
+  font-size: 1.08rem;
 }

@@ -1,263 +1,108 @@
-/* src/app/home.module.css */
-
-/* --- LAYOUT CHUNG --- */
-.container {
+.pageRoot {
   min-height: 100vh;
-  /* Kế thừa màu nền và chữ từ globals.css */
+  background: radial-gradient(circle at top right, rgba(255, 220, 190, 0.12), transparent 60%), #f8f1e4;
+  color: #3b3128;
 }
 
-/* Container giới hạn chiều rộng nội dung chính và căn giữa */
 .mainContentWrapper {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 5.5rem 2rem 4rem;
+  display: grid;
+  gap: 4.5rem;
 }
 
-/* --- NAVBAR (Hiện đại và nhẹ nhàng) --- */
-.navBar {
-  width: 100%;
-  padding: 0.75rem 1.25rem; /* compact */
-  border-bottom: 1px solid rgba(248,245,231,0.2); /* Viền màu be */
-  display: flex;
-  justify-content: center; /* center inner container */
-  align-items: center;
-  backdrop-filter: blur(10px);
-  background: linear-gradient(135deg, rgba(248,245,231,0.05) 0%, rgba(210,55,67,0.02) 100%);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  transition: box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease, padding 0.2s ease;
-}
-
-.navBarScrolled {
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-  border-color: rgba(248,245,231,0.25);
-  background: linear-gradient(135deg, rgba(0,0,0,0.25) 0%, rgba(210,55,67,0.06) 100%);
-}
-
-.navInner {
-  width: 100%;
-  max-width: 1200px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navBrand {
-  color: inherit;
-  text-decoration: none;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  font-size: 1.1rem;
-  padding: 0.1rem 0.25rem;
-  border-radius: 8px;
-}
-
-/* mini logo */
-.miniLogo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.miniLogoCircle {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 6px 16px rgba(210,55,67,0.35);
-}
-
-.miniLogoEye {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #F8F5E7, #e8e0c7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.miniLogoPupil {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-theme-primary-red);
-}
-
-.navMenu {
-  display: flex;
-  gap: 0.5rem; /* tighter */
-  align-items: center;
-}
-
-.navLink {
-  color: inherit;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem; /* Giảm kích thước */
-  opacity: 0.85;
-  transition: all 0.25s ease;
-  padding: 0.4rem 0.7rem; /* tighter */
-  border-radius: 8px;
-}
-
-.navLink:hover {
-  color: var(--color-theme-primary-red);
-  opacity: 1;
-  background: rgba(210,55,67,0.10);
-}
-
-.activeLink {
-  color: var(--color-theme-primary-red);
-  background: rgba(210,55,67,0.12);
-  box-shadow: inset 0 0 0 1px rgba(210,55,67,0.25);
-}
-
-.hamburger {
-  display: none;
-  width: 36px; /* smaller */
-  height: 36px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  border: 1px solid rgba(248,245,231,0.2);
-  background: rgba(248,245,231,0.06);
-  transition: all 0.25s ease;
-}
-
-.hamburger:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-  border-color: rgba(210,55,67,0.35);
-}
-
-.hamburgerLine {
-  display: block;
-  width: 16px;
-  height: 2px;
-  background: var(--color-theme-text-dark);
-  border-radius: 2px;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-}
-
-.hamburgerLine + .hamburgerLine {
-  margin-top: 4px;
-}
-
-.hamburgerLineTopOpen {
-  transform: translateY(6px) rotate(45deg);
-}
-
-.hamburgerLineMiddleOpen {
-  opacity: 0;
-}
-
-.hamburgerLineBottomOpen {
-  transform: translateY(-6px) rotate(-45deg);
-}
-
-/* Mobile menu */
-.mobileMenu {
-  display: none;
-  flex-direction: column;
-  gap: 0.25rem; /* tighter */
-  padding: 0 0.75rem 0.75rem 0.75rem;
-}
-
-.mobileMenuOpen {
-  display: flex;
-}
-
-.mobileNavLink {
-  color: inherit;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem;
-  opacity: 0.9;
-  transition: opacity 0.2s ease;
-  padding: 0.5rem 0.6rem;
-  border-radius: 8px;
-  background: rgba(248,245,231,0.06);
-  border: 1px solid rgba(248,245,231,0.12);
-}
-
-.mobileNavLink:hover {
-  opacity: 1;
-}
-
-/* Responsive navbar */
-@media (max-width: 900px) {
-  .navMenu {
-    display: none;
-  }
-  .hamburger {
-    display: inline-flex;
-  }
-}
-
-/* --- HERO SECTION LAYOUT --- */
 .heroSection {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
   gap: 4rem;
-  margin-bottom: 6rem;
-  min-height: 60vh;
 }
 
 .heroContent {
-  flex: 1;
-  text-align: left;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tagline {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.55rem 1.4rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #d23743, #ff7b6e);
+  color: #fff;
+  width: fit-content;
+}
+
+.headerTitle {
+  font-family: var(--font-title), sans-serif;
+  font-size: clamp(2.5rem, 6vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  color: #c42b3a;
+  max-width: 16ch;
+}
+
+.headerSubtitle {
+  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+  line-height: 1.6;
+  color: rgba(59, 49, 40, 0.84);
+  max-width: 36ch;
 }
 
 .logoSection {
-  flex: 0 0 auto;
   display: flex;
-  justify-content: center;
   align-items: center;
-  transform: translateX(-200px);
+  justify-content: center;
 }
 
-/* --- LOGO DESIGN --- */
 .logoContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .logoCircle {
-  width: 200px;
-  height: 200px;
+  width: clamp(160px, 30vw, 220px);
+  aspect-ratio: 1/1;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: linear-gradient(135deg, #d23743, #ff7b6e);
+  display: grid;
+  place-items: center;
   position: relative;
-  box-shadow: 0 20px 40px rgba(210,55,67,0.3);
+  box-shadow: 0 22px 44px rgba(210, 55, 67, 0.28);
   animation: logoFloat 6s ease-in-out infinite;
 }
 
 .logoEye {
-  width: 120px;
-  height: 120px;
+  width: clamp(96px, 18vw, 140px);
+  aspect-ratio: 1/1;
   border-radius: 50%;
-  background: linear-gradient(135deg, #F8F5E7, #e8e0c7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: linear-gradient(135deg, #fff6e5, #f0e4d0);
+  display: grid;
+  place-items: center;
   position: relative;
 }
 
 .logoPupil {
-  width: 40px;
-  height: 40px;
+  width: clamp(28px, 6vw, 48px);
+  aspect-ratio: 1/1;
   border-radius: 50%;
-  background: var(--color-theme-primary-red);
-  animation: pupilMove 4s ease-in-out infinite;
+  background: #821b24;
+  animation: pupilMove 4.5s ease-in-out infinite;
 }
 
 .logoText {
@@ -266,265 +111,136 @@
 
 .logoMain {
   display: block;
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 5vw, 2.8rem);
   font-weight: 800;
-  color: var(--color-theme-primary-red);
-  font-family: var(--font-title), sans-serif;
-  letter-spacing: -1px;
+  color: #c42b3a;
+  letter-spacing: -0.8px;
 }
 
 .logoSub {
   display: block;
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 2.8vw, 1.35rem);
   font-weight: 600;
-  color: var(--color-theme-text-dark);
-  opacity: 0.8;
-  margin-top: -0.5rem;
-}
-
-/* Logo Animations */
-@keyframes logoFloat {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(2deg); }
-}
-
-@keyframes pupilMove {
-  0%, 100% { transform: translateX(0px); }
-  25% { transform: translateX(8px); }
-  75% { transform: translateX(-8px); }
-}
-
-/* --- HEADER / HERO SECTION --- */
-.tagline {
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  padding: 0.5rem 1.25rem;
-  border-radius: 9999px;
-  margin-bottom: 1rem;
-  display: inline-block;
-  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
-  color: white;
-}
-
-.headerTitle {
-  font-size: 3.5rem; /* Giảm kích thước để nhẹ nhàng hơn */
-  font-weight: 800; /* Giảm từ 900 xuống 800 */
-  line-height: 1.2; 
-  margin-bottom: 0.5rem;
-  letter-spacing: -1px;
-  color: var(--color-theme-primary-red); 
-  font-family: var(--font-title), sans-serif; 
-  max-width: 12ch;
-  opacity: 0.95; /* Giảm tương phản một chút */
-}
-
-.headerSubtitle {
-  font-size: 1.4rem; /* Giảm kích thước */
-  font-weight: 400;
-  max-width: 600px; 
-  margin: 0 0 3rem 0;
-  opacity: 0.85; /* Giảm tương phản */
-  line-height: 1.5;
-}
-
-/* --- ACTION BUTTONS (Hiện đại và nhẹ nhàng) --- */
-.actionButton {
-  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
-  color: white; 
-  font-weight: 600; /* Giảm từ 700 xuống 600 */
-  font-size: 1rem; /* Giảm kích thước */
-  padding: 0.875rem 2rem; /* Giảm padding */
-  margin: 0 0.5rem;
-  border-radius: 12px; /* Bo tròn hơn */
-  border: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: inline-block;
-  text-decoration: none; 
-  box-shadow: 0 4px 12px rgba(210,55,67,0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.actionButton::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s;
-}
-
-.actionButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(210,55,67,0.4);
-}
-
-.actionButton:hover::before {
-  left: 100%;
-}
-
-
-/* --- BỐ CỤC THẺ NỘI DUNG (GRID) --- */
-.gridTitle {
-    text-align: center; 
-    margin-top: 6rem;
-    margin-bottom: 3rem;
-    font-size: 1.25rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    opacity: 0.9;
+  color: rgba(59, 49, 40, 0.75);
+  margin-top: -0.35rem;
+  letter-spacing: 3px;
 }
 
 .navigationGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 2rem;
-  margin-bottom: 5rem;
 }
 
 .navCard {
-  background: linear-gradient(135deg, rgba(248,245,231,0.08) 0%, rgba(210,55,67,0.05) 100%);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(248,245,231,0.2);
-  color: var(--foreground);
-  padding: 2rem;
-  border-radius: 16px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 200px;
-  text-align: left;
+  border-radius: 20px;
+  padding: 2.25rem;
   text-decoration: none;
-  position: relative;
-  overflow: hidden;
-}
-
-.navCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--color-theme-primary-red), #ff6b6b);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
+  display: grid;
+  gap: 1.2rem;
+  color: inherit;
+  background: rgba(255, 249, 240, 0.88);
+  border: 1px solid rgba(118, 94, 73, 0.22);
+  box-shadow: 0 18px 42px rgba(73, 55, 37, 0.12);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .navCard:hover {
-  background: linear-gradient(135deg, rgba(210,55,67,0.15) 0%, rgba(248,245,231,0.1) 100%);
-  border-color: rgba(210,55,67,0.4);
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(210,55,67,0.2);
-}
-
-.navCard:hover::before {
-  transform: scaleX(1);
+  transform: translateY(-6px);
+  border-color: rgba(210, 55, 67, 0.32);
+  box-shadow: 0 26px 54px rgba(73, 55, 37, 0.16);
 }
 
 .cardIcon {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, var(--color-theme-primary-red), #ff6b6b);
-  color: white;
-  font-size: 1.25rem;
-  border-radius: 12px;
-  display: flex;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #d23743, #ff7b6e);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
-  box-shadow: 0 4px 12px rgba(210,55,67,0.3);
-  transition: all 0.3s ease;
-}
-
-.navCard:hover .cardIcon {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 6px 20px rgba(210,55,67,0.4);
+  font-size: 1.45rem;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(210, 55, 67, 0.32);
 }
 
 .cardTitle {
-  font-size: 1.25rem; 
+  font-size: 1.28rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
-  line-height: 1.3;
-  color: var(--foreground);
+  letter-spacing: 0.1px;
+  color: #3b3128;
 }
 
 .cardDescription {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  opacity: 0.7;
-  color: var(--foreground);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(59, 49, 40, 0.72);
 }
 
-/* --- RESPONSIVE DESIGN --- */
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pupilMove {
+  0%, 100% {
+    transform: translateX(0px);
+  }
+  30% {
+    transform: translateX(6px);
+  }
+  70% {
+    transform: translateX(-6px);
+  }
+}
+
 @media (max-width: 1024px) {
+  .mainContentWrapper {
+    padding: 4.5rem 1.75rem 3.5rem;
+  }
+
   .heroSection {
-    flex-direction: column;
-    gap: 3rem;
+    grid-template-columns: 1fr;
     text-align: center;
+    gap: 3.5rem;
   }
-  
-  .heroContent {
-    text-align: center;
+
+  .heroActions {
+    justify-content: center;
   }
-  
-  .logoCircle {
-    width: 150px;
-    height: 150px;
-  }
-  
-  .logoEye {
-    width: 90px;
-    height: 90px;
-  }
-  
-  .logoPupil {
-    width: 30px;
-    height: 30px;
-  }
-  
-  .logoMain {
-    font-size: 2rem;
+
+  .headerSubtitle {
+    margin: 0 auto;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 720px) {
   .mainContentWrapper {
-    padding: 3rem 1rem;
+    padding: 4rem 1.25rem 3rem;
+    gap: 3.5rem;
   }
-  
-  .navBar {
-    padding: 1rem 1.5rem;
+
+  .heroActions {
+    flex-direction: column;
   }
-  
-  .headerTitle {
-    font-size: 2.5rem;
-  }
-  
-  .headerSubtitle {
-    font-size: 1.2rem;
-  }
-  
+
   .navigationGrid {
-    grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
-  .logoCircle {
-    width: 120px;
-    height: 120px;
+}
+
+@media (max-width: 520px) {
+  .navCard {
+    padding: 1.8rem;
   }
-  
-  .logoEye {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .logoPupil {
-    width: 25px;
-    height: 25px;
+
+  .cardIcon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.25rem;
   }
 }

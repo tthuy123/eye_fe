@@ -1,12 +1,15 @@
 "use client";
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, ReactNode, type MouseEvent as ReactMouseEvent } from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
+
+type LayoutMode = "flex" | "block";
 
 interface GazeButtonProps extends HTMLMotionProps<"button"> {
   children: ReactNode;
   style?: React.CSSProperties;
   onClick: () => void;
   className?: string;
+  layoutMode?: LayoutMode;
 }
 
 export default function GazeButton({
@@ -14,58 +17,76 @@ export default function GazeButton({
   style,
   onClick,
   className,
+  layoutMode = "flex",
+  onMouseEnter: externalMouseEnter,
+  onMouseLeave: externalMouseLeave,
+  disabled,
   ...props
 }: GazeButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout | undefined;
-    if (isHovered) {
-      let elapsedTime = 0;
-      timer = setInterval(() => {
-        elapsedTime += 50;
-        setProgress((elapsedTime / 1500) * 100);
-
-        if (elapsedTime >= 1500) {
-			//   clearInterval(timer);
-			elapsedTime = -1000;
-          handleHoverActivate();
-        }
-      }, 50);
-    } else {
-      if (timer) {
-        clearInterval(timer);
-      }
+    if (!isHovered || disabled) {
       setProgress(0);
+      return;
     }
 
-    return () => {
-      if (timer) {
-        clearInterval(timer);
-      }
-    };
-  }, [isHovered]);
+    let elapsedTime = 0;
+    const dwellInterval = 1500;
+    const step = 50;
 
-  const handleHoverActivate = () => {
-     if (onClick) onClick(); 
+    const timer = setInterval(() => {
+      elapsedTime += step;
+      setProgress(Math.min((elapsedTime / dwellInterval) * 100, 100));
+
+      if (elapsedTime >= dwellInterval) {
+        clearInterval(timer);
+        setIsHovered(false);
+        setProgress(100);
+        onClick?.();
+      }
+    }, step);
+
+    return () => {
+      clearInterval(timer);
+      setProgress(0);
+    };
+  }, [isHovered, disabled, onClick]);
+
+  const handleMouseEnter = (event: ReactMouseEvent<HTMLButtonElement>) => {
+    if (disabled) {
+      externalMouseEnter?.(event);
+      return;
+    }
+    setIsHovered(true);
+    externalMouseEnter?.(event);
   };
+
+  const handleMouseLeave = (event: ReactMouseEvent<HTMLButtonElement>) => {
+    setIsHovered(false);
+    externalMouseLeave?.(event);
+  };
+
+  const baseLayoutStyles: React.CSSProperties =
+    layoutMode === "flex"
+      ? { display: "flex", alignItems: "center", justifyContent: "center" }
+      : { display: "block", width: "100%" };
 
   return (
     <motion.button
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={onClick}
+      disabled={disabled}
       style={{
-        ...style,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        ...baseLayoutStyles,
         position: "relative",
+        ...style,
       }}
       className={className}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: layoutMode === "flex" ? 1.05 : 1.01 }}
+      whileTap={{ scale: layoutMode === "flex" ? 0.95 : 0.99 }}
       {...props}
     >
       {children}
@@ -74,10 +95,11 @@ export default function GazeButton({
           position: "absolute",
           bottom: 0,
           left: 0,
-          width: '${progress}%',
+          width: `${progress}%`,
           height: "5px",
           backgroundColor: "#adc6ff",
           transition: "width 0.05s ease-out",
+          borderRadius: "999px",
           zIndex: 1,
         }}
       />
