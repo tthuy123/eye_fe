@@ -43,49 +43,71 @@ export default function NovelReaderPage() {
 	useEffect(() => {
 		const fetchNovel = async () => {
 			try {
-				const response = await fetch(`/api/proxy?title=${params?.slug}`);
+				// Decode URL parameter
+				const decodedSlug = decodeURIComponent(params?.slug as string || '');
+				console.log("Original slug:", params?.slug);
+				console.log("Decoded slug:", decodedSlug);
+				
+				const response = await fetch(`/api/proxy?title=${encodeURIComponent(decodedSlug)}`);
 				const data = await response.json();
 				console.log("Book detail response:", data);
+				console.log("Search query:", decodedSlug);
+				console.log("Results count:", data?.results?.length || 0);
+				
 				const bookData = (data as { results: any[] })?.results?.[0] || null;
-				if (bookData) {
-					// Lấy nội dung sách từ link HTML
-					const htmlUrl = bookData.formats["text/html"];
-					console.log(htmlUrl)
-					const thumbnailUrl = bookData.formats["image/jpeg"];
-					const htmlResponse = await fetch(`/api/process_book?bookId=${bookData.id}`);
-					const htmlContent = await htmlResponse.json();
-					console.log(htmlContent)
-
-					const parsedChapters: Chapter[] = htmlContent.chapters
-						.filter((ch: any) =>
-							typeof ch.title === "string" &&
-							ch.title.toLowerCase().includes("chapter") &&
-							Array.isArray(ch.content) && ch.content.length > 0
-						)
-						.map((ch: any, idx: number) => ({
-							id: `chapter-${idx + 1}`,
-							title: ch.title.replace(/\n/g, ' ').trim(),
-							content: ch.content
-						}));
-
-					// Tạo đối tượng novel từ dữ liệu
-					const novelData: Novel = {
-						id: params?.slug as string,
-						title: bookData.title,
-						author: bookData.authors?.[0]?.name || "",
-						description: bookData.summaries[0] || "",
-						thumbnail: thumbnailUrl || "/default-cover.jpg",
-						chapters: parsedChapters,
-						metadata: {
-							publisher: "Project Gutenberg",
-							language: bookData.languages?.[0] || "English",
-							releaseDate: bookData.release_date || "Unknown"
-						}
-					};
-
-					setNovel(novelData);
+				
+				if (!bookData) {
+					console.error("No book found with title:", decodedSlug);
+					setIsLoading(false);
+					return;
 				}
-				// setNovel(bookData);
+				
+				console.log("Found book:", bookData.title, "ID:", bookData.id);
+				
+				// Lấy nội dung sách từ link HTML
+				const htmlUrl = bookData.formats["text/html"];
+				console.log("HTML URL:", htmlUrl);
+				const thumbnailUrl = bookData.formats["image/jpeg"];
+				const htmlResponse = await fetch(`/api/process_book?bookId=${bookData.id}`);
+				const htmlContent = await htmlResponse.json();
+				console.log("HTML Content chapters:", htmlContent?.chapters?.length || 0);
+
+				const parsedChapters: Chapter[] = htmlContent.chapters
+					.filter((ch: any) =>
+						typeof ch.title === "string" &&
+						(ch.title.toLowerCase().includes("chapter") || 
+						 ch.title.toLowerCase().includes("book")) &&
+						Array.isArray(ch.content) && ch.content.length > 0
+					)
+					.map((ch: any, idx: number) => ({
+						id: `chapter-${idx + 1}`,
+						title: ch.title.replace(/\n/g, ' ').trim(),
+						content: ch.content
+					}));
+
+				console.log("Parsed chapters count:", parsedChapters.length);
+				console.log("First few chapter titles:", parsedChapters.slice(0, 3).map(ch => ch.title));
+				
+				// Tạo đối tượng novel từ dữ liệu
+				const novelData: Novel = {
+					id: params?.slug as string,
+					title: bookData.title,
+					author: bookData.authors?.[0]?.name || "",
+					description: bookData.summaries[0] || "",
+					thumbnail: thumbnailUrl || "/default-cover.jpg",
+					chapters: parsedChapters,
+					metadata: {
+						publisher: "Project Gutenberg",
+						language: bookData.languages?.[0] || "English",
+						releaseDate: bookData.release_date || "Unknown"
+					}
+				};
+
+				if (parsedChapters.length === 0) {
+					console.warn("No chapters found for this book. The book structure may be different.");
+				}
+
+				setNovel(novelData);
 			} catch (error) {
 				console.error("Failed to fetch novel:", error);
 			} finally {
@@ -115,9 +137,11 @@ export default function NovelReaderPage() {
 
 
 	const renderReadingContent = () => {
-		if (!novel) return null;
+		if (!novel || !novel.chapters || novel.chapters.length === 0) return null;
 
 		const chapter = novel.chapters[currentChapterIndex];
+		if (!chapter) return null;
+		
 		const startIdx = (currentPage - 1) * paragraphsPerPage;
 		const endIdx = startIdx + paragraphsPerPage;
 		const visibleParagraphs = chapter.content.slice(startIdx, endIdx);
@@ -216,14 +240,26 @@ export default function NovelReaderPage() {
 
 	if (!novel) {
 		return (
-			<div className="text-center py-20">
-				<h1 className="text-2xl font-bold mb-4">Novel Not Found</h1>
-				<GazeButton
-					onClick={() => router.back()}
-					className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-				>
-					Go Back
-				</GazeButton>
+			<div className="min-h-screen bg-[#F5E9DC] flex flex-col justify-center items-center p-8">
+				<div className="max-w-2xl text-center bg-white rounded-2xl shadow-2xl p-12">
+					<div className="text-6xl mb-6">📚</div>
+					<h1 className="text-4xl font-bold mb-4 text-gray-800">Book Not Available</h1>
+					<p className="text-lg text-gray-600 mb-6">
+						Sorry, "<span className="font-semibold">{decodeURIComponent(params?.slug as string || '')}</span>" is not available in our reading library.
+					</p>
+					<p className="text-md text-gray-500 mb-8">
+						This book may not be available in Project Gutenberg's free collection. 
+						Please try another book from our recommendations.
+					</p>
+					<GazeButton
+						onClick={() => router.push("/books")}
+						className="px-8 py-4 bg-[#E64A4A] text-white rounded-lg hover:bg-[#d43d3d] text-xl"
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.95 }}
+					>
+						← Back to Books
+					</GazeButton>
+				</div>
 			</div>
 		);
 	}
@@ -267,14 +303,26 @@ export default function NovelReaderPage() {
 								
 							</div>
 						</div>
-						<GazeButton
-							onClick={() => setIsReading(true)}
-							className="px-10 py-6 bg-[#E64A4A] rounded-lg hover:bg-gray-300 text-black text-xl w-fit"
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-						>
-							Start Reading
-						</GazeButton>
+						{novel.chapters && novel.chapters.length > 0 ? (
+							<GazeButton
+								onClick={() => setIsReading(true)}
+								className="px-10 py-6 bg-[#E64A4A] rounded-lg hover:bg-gray-300 text-black text-xl w-fit"
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+							>
+								Start Reading
+							</GazeButton>
+						) : (
+							<div className="text-center bg-yellow-100 border border-yellow-400 rounded-lg p-6 mt-4">
+								<p className="text-xl text-yellow-800 font-semibold">
+									⚠️ No readable chapters found in this book
+								</p>
+								<p className="text-sm text-yellow-700 mt-2">
+									The book structure may not be compatible with our reader. 
+									Please try another book.
+								</p>
+							</div>
+						)}
 					</div>
 
 
