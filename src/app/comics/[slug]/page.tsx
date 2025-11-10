@@ -313,41 +313,44 @@ export default function BookDetail() {
 
 	const fetchChapters = async (id: string) => {
 		try {
-			const res = await fetch(
+			// Thử lấy chapters tiếng Anh trước
+			let res = await fetch(
 				`https://api.mangadex.org/chapter?manga=${id}&translatedLanguage[]=en&order[chapter]=asc&limit=100`
 			);
-			const data = await res.json();
-			const rawChapters: any[] = data.data;
+			let data = await res.json();
+			let rawChapters: any[] = data.data;
 
-			// Lọc: chỉ lấy chương có số và có trang
-			const filtered = rawChapters.filter(
-				(c) => c.attributes.chapter && c.attributes.pages > 0
-			);
+			console.log("English chapters count:", rawChapters.length);
+			console.log("Raw chapters data:", rawChapters);
 
-			// Map theo số chapter
-			const chapterMap = new Map<string, Chapter>();
-
-			for (const c of filtered) {
-				const chNum = c.attributes.chapter;
-				const existing = chapterMap.get(chNum);
-
-				if (
-					!existing ||
-					c.attributes.pages > (existing as any).pages // Ưu tiên bản nhiều trang hơn
-				) {
-					chapterMap.set(chNum, {
-						id: c.id,
-						chapter: chNum,
-						title: c.attributes.title,
-						pages: c.attributes.pages,
-					});
-				}
+			// Nếu không có chapters tiếng Anh, thử lấy tất cả ngôn ngữ
+			if (rawChapters.length === 0) {
+				console.log("No English chapters, trying all languages...");
+				res = await fetch(
+					`https://api.mangadex.org/chapter?manga=${id}&order[chapter]=asc&limit=100`
+				);
+				data = await res.json();
+				rawChapters = data.data;
+				console.log("All language chapters count:", rawChapters.length);
 			}
 
-			// Sắp xếp chương tăng dần
-			const chapterList = Array.from(chapterMap.values()).sort(
-				(a, b) => parseFloat(a.chapter) - parseFloat(b.chapter)
-			);
+			// Lọc và map chapters - không filter gì cả, lấy hết
+			const chapterList: Chapter[] = [];
+			
+			for (let i = 0; i < rawChapters.length; i++) {
+				const c = rawChapters[i];
+				const chNum = c.attributes.chapter || `oneshot-${i}`;
+				
+				chapterList.push({
+					id: c.id,
+					chapter: chNum,
+					title: c.attributes.title || "Untitled",
+					pages: c.attributes.pages || 0,
+				});
+			}
+
+			console.log("Total chapters added:", chapterList.length);
+			console.log("First few chapters:", chapterList.slice(0, 5));
 
 			setChapters(chapterList);
 		} catch (err) {
@@ -417,44 +420,55 @@ export default function BookDetail() {
 					whileHover={{ scale: 1.2 }}
 					whileTap={{ scale: 0.9 }}
 					onClick={handlePrevious}
-					disabled={currentChapterIndex === 0}
+					disabled={currentChapterIndex === 0 || chapters.length === 0}
 					className="p-10 rounded-full bg-[#E64A4A] text-white text-5xl"
 				>
 					<AiOutlineLeft />
 				</GazeButton>
 
-				{/* Lưới chương */}
-				<motion.div
-					className="grid gap-4 md:gap-8 sm:grid-cols-2 md:grid-cols-4"
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.5 }}
-				>
-					{currentPageChapters.map((chapter, index) => (
-						<GazeButton
-							key={index}
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							className="bg-[#E64A4A] text-[#293041] rounded-lg hover:bg-[#3f4759] hover:text-[#dbe2f9] text-2xl flex items-center justify-center shadow-lg"
-							style={{
-								width: "200px",
-								height: "100px",
-							}}
-							onClick={() => {
-								router.push(`/comics/chapter/${chapter.id}`);
-							}}
-						>
-							Chap {chapter.chapter}
-						</GazeButton>
-					))}
-				</motion.div>
+				{/* Lưới chương hoặc thông báo không có chapters */}
+				{chapters.length > 0 ? (
+					<motion.div
+						className="grid gap-4 md:gap-8 sm:grid-cols-2 md:grid-cols-4"
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.5 }}
+					>
+						{currentPageChapters.map((chapter, index) => (
+							<GazeButton
+								key={index}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								className="bg-[#E64A4A] text-white rounded-lg hover:bg-[#d43d3d] text-2xl flex items-center justify-center shadow-lg"
+								style={{
+									width: "200px",
+									height: "100px",
+								}}
+								onClick={() => {
+									router.push(`/comics/chapter/${chapter.id}`);
+								}}
+							>
+								{chapter.chapter.startsWith('oneshot') ? chapter.title : `Chap ${chapter.chapter}`}
+							</GazeButton>
+						))}
+					</motion.div>
+				) : (
+					<div className="bg-yellow-100 border border-yellow-400 rounded-lg p-8 text-center" style={{ width: "600px" }}>
+						<p className="text-2xl text-yellow-800 font-semibold mb-2">
+							⚠️ No chapters available
+						</p>
+						<p className="text-lg text-yellow-700">
+							This manga may not have readable chapters yet.
+						</p>
+					</div>
+				)}
 
 				{/* Nút Next */}
 				<GazeButton
 					whileHover={{ scale: 1.2 }}
 					whileTap={{ scale: 0.9 }}
 					onClick={handleNext}
-					disabled={currentChapterIndex + chaptersPerPage >= chapters.length}
+					disabled={currentChapterIndex + chaptersPerPage >= chapters.length || chapters.length === 0}
 					className="p-10 rounded-full bg-[#E64A4A] text-white text-5xl"
 				>
 					<AiOutlineRight />

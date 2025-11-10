@@ -121,23 +121,24 @@ export default function BooksPage() {
 					}) || [];
 					setBooks(processedBooks);
 				} else {
+					// Fetch from Project Gutenberg instead of Google Books
 					const response = await fetch(
-						`https://www.googleapis.com/books/v1/volumes?q=subject:${encodeURIComponent(query)}&maxResults=40`
+						`https://gutendex.com/books/?topic=${encodeURIComponent(query.toLowerCase())}`
 					);
 					const data = await response.json();
-					console.log("Books data:", data);
-					const processedBooks = data?.items
-						?.filter((item: any) => item.volumeInfo?.imageLinks?.thumbnail)
-						.map((item: any) => ({
-							id: item.id,
-							title: item.volumeInfo?.title || "Untitled",
-							author: item.volumeInfo?.authors?.join(", ") || "Unknown",
-							coverImage: item.volumeInfo?.imageLinks?.thumbnail,
-							slug: item.volumeInfo?.title || "Untitled",
-							thumb_url: item.volumeInfo?.imageLinks?.thumbnail,
-							name: item.volumeInfo?.title || "Untitled",
-							volumeInfo: item.volumeInfo,
-							category: query, // Assign the selected category
+					console.log("Gutenberg data:", data);
+					
+					const processedBooks = data?.results
+						?.filter((book: any) => book.formats["image/jpeg"]) // Only books with cover images
+						.map((book: any) => ({
+							id: book.id.toString(),
+							title: book.title || "Untitled",
+							author: book.authors?.[0]?.name || "Unknown",
+							coverImage: book.formats["image/jpeg"],
+							slug: book.title || "Untitled",
+							thumb_url: book.formats["image/jpeg"],
+							name: book.title || "Untitled",
+							category: query,
 						})) || [];
 
 					setBooks(processedBooks);
@@ -178,30 +179,31 @@ export default function BooksPage() {
 	};
 
 	const handleSearch = async () => {
-		console.log(searchQuery)
+		console.log(searchQuery);
 		setSearchTerm(searchQuery);
 		setSelectedCategory(null);
+		
+		// Search in Gutenberg instead of Google Books
 		const response = await fetch(
-			`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(searchQuery)}&maxResults=40`
+			`https://gutendex.com/books/?search=${encodeURIComponent(searchQuery)}`
 		);
 		const data = await response.json();
-		console.log(data)
+		console.log("Search results:", data);
+		
 		let processedBooks: Book[] = [];
-		processedBooks = data?.items?.filter((item: any) => item.volumeInfo?.imageLinks?.thumbnail)
-			.map((item: any) => ({
-				id: item.id,
-				title: item.volumeInfo?.title || "Untitled",
-				author: item.volumeInfo?.authors?.join(", ") || "Unknown",
-				coverImage: item.volumeInfo?.imageLinks?.thumbnail,
-				slug: item.volumeInfo?.title || "Untitled",
-				thumb_url: item.volumeInfo?.imageLinks?.thumbnail,
-				name: item.volumeInfo?.title || "Untitled",
-				volumeInfo: item.volumeInfo,
-				category: selectedCategory || "Novel",
+		processedBooks = data?.results
+			?.filter((book: any) => book.formats["image/jpeg"])
+			.map((book: any) => ({
+				id: book.id.toString(),
+				title: book.title || "Untitled",
+				author: book.authors?.[0]?.name || "Unknown",
+				coverImage: book.formats["image/jpeg"],
+				slug: book.title || "Untitled",
+				thumb_url: book.formats["image/jpeg"],
+				name: book.title || "Untitled",
+				category: "search",
 			})) || [];
-
-		console.log(processedBooks)
-
+		
 		setBooks(processedBooks);
 		setCurrentIndex(0);
 	};
