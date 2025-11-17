@@ -202,7 +202,7 @@ export default function NovelReaderPage() {
 						<GazeButton
 							onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
 							disabled={currentPage === 1}
-							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+							className="px-5 py-6 bg-[#E64A4A] rounded-lg hover:bg-[#F5E9DC] disabled:opacity-50"
 							whileHover={{ scale: 1.05 }}
 						>
 							← Previous Page
@@ -215,7 +215,7 @@ export default function NovelReaderPage() {
 						<GazeButton
 							onClick={() => setCurrentPage(p => p + 1)}
 							disabled={currentPage >= totalPages}
-							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+							className="px-5 py-6 bg-[#E64A4A] rounded-lg hover:bg-[#F5E9DC] disabled:opacity-50"
 							whileHover={{ scale: 1.05 }}
 						>
 							Next Page →
@@ -362,7 +362,7 @@ export default function NovelReaderPage() {
 					transition={{ duration: 0.5 }}
 				>
 					{/* Back Button */}
-					<div className="max-w-4xl ml-8 mb-6 fixed justify-start">
+					<div className="fixed top-12 left-10 z-50">
 						<GazeButton
 							whileHover={{ scale: 1.2 }}
 							whileTap={{ scale: 0.9 }}
